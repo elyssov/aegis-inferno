@@ -798,14 +798,19 @@ function stopImp(){clearTimeout(impatienceTimer)}
 // CHOICES
 function showCh(to,opts){
   return new Promise(resolve=>{
-    if(to!==tab)sw(to);
-    // Get this tab's own choices div and input row
+    // DON'T force-switch tabs! Just show badge if not on the right tab
     const chId=to==='her'?'chHer':'chGrp';
     const irId=to==='her'?'irHer':'irGrp';
     const ch=document.getElementById(chId);
     const ir=document.getElementById(irId);
     ch.innerHTML='';ch.style.display='flex';
     if(ir)ir.style.display='none';
+    // Notify with badge if user is on different tab
+    if(to!==tab){
+      unread[to]++;
+      const b=document.getElementById(to==='her'?'bH':'bG');
+      b.textContent=unread[to];b.style.display='inline-block';
+    }
     startImp(to);
     for(let i=0;i<opts.length;i++){
       const btn=document.createElement('button');btn.className='ch-btn';btn.textContent=opts[i];
