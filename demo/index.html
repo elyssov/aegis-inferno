@@ -83,8 +83,12 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;b
 .bub .sn{font-size:11px;font-weight:600;margin-bottom:2px;display:block}
 .sn.her-c{color:var(--p-her)}.sn.grp-c{color:var(--p-group)}.sn.ang-c{color:var(--p-angel)}
 .bub .tm{font-size:10px;color:var(--p-dim);text-align:right;margin-top:4px}
-.typing{padding:4px 16px;font-size:12px;color:var(--p-dim);font-style:italic;display:none;flex-shrink:0}
-.typing.vis{display:block}
+.typing{padding:4px 16px;font-size:12px;color:var(--p-dim);display:none;align-items:center;gap:4px;flex-shrink:0}
+.typing.vis{display:flex}
+.typing-dots span{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--p-dim);animation:tDot 1.2s ease-in-out infinite;margin:0 1px}
+.typing-dots span:nth-child(2){animation-delay:.2s}
+.typing-dots span:nth-child(3){animation-delay:.4s}
+@keyframes tDot{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
 
 /* INBOX (Command tab) */
 .inbox{flex:1;overflow-y:auto;padding:8px 0}
@@ -119,8 +123,8 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;b
 .letter-response .resp-from{font-weight:600;font-size:12px;color:var(--p-dim);margin-bottom:4px}
 
 /* INPUT AREA */
-.input-area{padding:8px 12px;background:var(--p-white);border-top:1px solid var(--p-border);flex-shrink:0;display:flex;flex-direction:column;gap:6px}
-.choices{display:flex;flex-direction:column;gap:4px}
+.choices{display:flex;flex-direction:column;gap:4px;padding:8px 12px;background:var(--p-white);border-top:1px solid var(--p-border);flex-shrink:0}
+.input-row{padding:8px 12px;background:var(--p-white);border-top:1px solid var(--p-border);flex-shrink:0}
 .ch-btn{padding:10px 14px;background:var(--p-mine);border:1px solid var(--p-accent);border-radius:10px;color:var(--p-text);font-size:14px;cursor:pointer;text-align:left;font-family:inherit;transition:.2s}
 .ch-btn:hover{background:#c0daff;border-color:#2563eb}
 .input-row{display:flex;gap:8px}
@@ -175,11 +179,17 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;b
 </div>
 <div class="chat-view active" id="vHer">
 <div class="chat-hdr"><div class="av her" id="avH"></div><div><div class="ch-name" id="nH"></div><div class="ch-status" id="sH"></div></div></div>
-<div class="msgs" id="mHer"></div><div class="typing" id="tHer"></div>
+<div class="msgs" id="mHer"></div>
+<div class="typing" id="tHer"></div>
+<div class="choices" id="chHer" style="display:none"></div>
+<div class="input-row" id="irHer"><input type="text" class="txt-input" id="tiHer" disabled><button class="send-btn" disabled>&#9654;</button></div>
 </div>
 <div class="chat-view" id="vGrp">
 <div class="chat-hdr"><div class="av grp">G</div><div><div class="ch-name" id="nG"></div><div class="ch-status" id="sG"></div></div></div>
-<div class="msgs" id="mGrp"></div><div class="typing" id="tGrp"></div>
+<div class="msgs" id="mGrp"></div>
+<div class="typing" id="tGrp"></div>
+<div class="choices" id="chGrp" style="display:none"></div>
+<div class="input-row" id="irGrp"><input type="text" class="txt-input" id="tiGrp" disabled><button class="send-btn" disabled>&#9654;</button></div>
 </div>
 <div class="chat-view" id="vCmd">
 <div class="chat-hdr"><div class="av cmd">C</div><div><div class="ch-name" id="nC"></div></div></div>
@@ -192,13 +202,6 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;b
   </div>
   <div class="letter-body" id="letterBody"></div>
   <div class="letter-reply-area" id="letterReplyArea"></div>
-</div>
-</div>
-<div class="input-area" id="inputArea">
-<div class="choices" id="choices" style="display:none"></div>
-<div class="input-row">
-<input type="text" class="txt-input" id="txtIn" disabled>
-<button class="send-btn" id="sendBtn" disabled>&#9654;</button>
 </div>
 </div>
 </div>
@@ -622,7 +625,8 @@ function startMsg(){
   document.getElementById('nG').textContent=t('gName');
   document.getElementById('sG').textContent=t('gSt');
   document.getElementById('nC').textContent=t('cName');
-  document.getElementById('txtIn').placeholder=t('ph');
+  document.getElementById('tiHer').placeholder=t('ph');
+  document.getElementById('tiGrp').placeholder=t('ph');
   runSeq();
 }
 
@@ -635,7 +639,6 @@ function sw(tb){
   unread[tb]=0;
   const badge=document.getElementById(tb==='her'?'bH':tb==='grp'?'bG':'bC');
   badge.style.display='none';
-  updateInputArea();
 }
 
 function addB(to,from,text,opts={}){
@@ -763,9 +766,14 @@ function sendReply(mailId,replyIdx){
   },delay);
 }
 
-function showTyp(to,on){
+function showTyp(to,on,who){
   const e=document.getElementById(to==='her'?'tHer':'tGrp');
-  if(e){e.textContent=t('typ');e.classList.toggle('vis',on)}
+  if(!e)return;
+  if(on){
+    const name=who||(to==='her'?t('hName'):'...');
+    e.innerHTML=`<span>${name} </span><div class="typing-dots"><span></span><span></span><span></span></div>`;
+  }
+  e.classList.toggle('vis',on);
 }
 
 function sl(ms){return new Promise(r=>setTimeout(r,ms))}
@@ -788,45 +796,29 @@ function startImp(to){
 function stopImp(){clearTimeout(impatienceTimer)}
 
 // CHOICES
-let activeChoiceTab=null;
 function showCh(to,opts){
   return new Promise(resolve=>{
     if(to!==tab)sw(to);
-    activeChoiceTab=to;
-    updateInputArea();
-    const ch=document.getElementById('choices');
+    // Get this tab's own choices div and input row
+    const chId=to==='her'?'chHer':'chGrp';
+    const irId=to==='her'?'irHer':'irGrp';
+    const ch=document.getElementById(chId);
+    const ir=document.getElementById(irId);
     ch.innerHTML='';ch.style.display='flex';
+    if(ir)ir.style.display='none';
     startImp(to);
     for(let i=0;i<opts.length;i++){
       const btn=document.createElement('button');btn.className='ch-btn';btn.textContent=opts[i];
       btn.onclick=()=>{
         stopImp();
-        activeChoiceTab=null;
         ch.style.display='none';
-        updateInputArea();
+        if(ir)ir.style.display='flex';
         addB(to,'mine',opts[i]);
         resolve(i);
       };
       ch.appendChild(btn);
     }
   });
-}
-// Show/hide input area based on active tab and choice state
-function updateInputArea(){
-  const ia=document.getElementById('inputArea');
-  const ch=document.getElementById('choices');
-  const inp=document.getElementById('txtIn');
-  const send=document.getElementById('sendBtn');
-  // Hide entire input area on cmd tab (it's an inbox)
-  if(tab==='cmd'){ia.style.display='none';return}
-  ia.style.display='';
-  // If there's an active choice on THIS tab, show choices, hide input
-  if(activeChoiceTab===tab){
-    ch.style.display='flex';inp.style.display='none';send.style.display='none';
-  } else {
-    // No active choice for this tab — show input, hide choices
-    ch.style.display='none';inp.style.display='';send.style.display='';
-  }
 }
 
 // CUTSCENE
@@ -881,7 +873,7 @@ async function runSeq(){
     }
     // Normal message
     const from=s.f==='her'?t('hName'):s.f==='sys'?'sys':s.f;
-    if(s.to!=='cmd'&&s.f!=='sys'){showTyp(s.to,true);await sl(400+Math.random()*800);showTyp(s.to,false)}
+    if(s.to!=='cmd'&&s.f!=='sys'){showTyp(s.to,true,from);await sl(400+Math.random()*800);showTyp(s.to,false)}
     addB(s.to,from,s.x,{a:s.a});
     await sl(200+Math.random()*500);
   }
