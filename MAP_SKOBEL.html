@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Скобелевск — Карта операции</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #050a05;
+  --bg-panel: #0a120a;
+  --border: #1a3a1a;
+  --text: #c8e6c9;
+  --text-dim: #4a6a4a;
+  --green: #00ff41;
+  --green-dim: #00aa2a;
+  --red: #ff1744;
+  --amber: #ffa000;
+  --gold: #daa520;
+  --blue: #42a5f5;
+  --purple: #ab47bc;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #000;
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+}
+
+/* MAP AREA */
+.map-container {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.map-svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* NOISE */
+.noise {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 256px;
+  animation: noiseShift 0.5s steps(5) infinite;
+}
+@keyframes noiseShift {
+  0% { transform: translate(0,0); }
+  25% { transform: translate(-5px,3px); }
+  50% { transform: translate(3px,-2px); }
+  75% { transform: translate(-3px,-5px); }
+  100% { transform: translate(5px,2px); }
+}
+
+/* SCANLINES */
+.scanlines {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 49;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px);
+  opacity: 0.15;
+}
+
+/* INFO PANEL */
+.info-panel {
+  width: 360px;
+  background: var(--bg-panel);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.panel-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--green);
+  text-transform: uppercase;
+}
+
+.panel-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.panel-content::-webkit-scrollbar { width: 3px; }
+.panel-content::-webkit-scrollbar-thumb { background: var(--border); }
+
+.panel-content h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 14px;
+  color: var(--green);
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+
+.panel-content h3 {
+  font-size: 12px;
+  color: var(--amber);
+  margin: 16px 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.panel-content p {
+  font-size: 13px;
+  line-height: 1.6;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.panel-content .tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 2px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-right: 4px;
+  margin-bottom: 4px;
+}
+.tag.danger { background: rgba(255,23,68,0.15); color: var(--red); }
+.tag.safe { background: rgba(0,255,65,0.15); color: var(--green); }
+.tag.warning { background: rgba(255,160,0,0.15); color: var(--amber); }
+.tag.lore { background: rgba(218,165,32,0.15); color: var(--gold); }
+.tag.archon { background: rgba(171,71,188,0.15); color: var(--purple); }
+
+.panel-content ul {
+  margin: 4px 0 12px 16px;
+  font-size: 13px;
+}
+.panel-content li { margin-bottom: 4px; }
+
+/* STATUS BAR */
+.status-bar {
+  padding: 8px 16px;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  display: flex;
+  justify-content: space-between;
+}
+.status-bar .val { color: var(--green); }
+
+/* LOCATION DOT HOVER */
+.loc-group { cursor: pointer; }
+.loc-group:hover .loc-ring { opacity: 1; }
+.loc-group:hover .loc-label { fill: var(--green); }
+.loc-group.active .loc-dot { filter: drop-shadow(0 0 8px var(--green)); }
+
+/* PULSE ANIMATION for archons */
+@keyframes pulse-red {
+  0%, 100% { r: 8; opacity: 0.6; }
+  50% { r: 14; opacity: 0; }
+}
+@keyframes pulse-blue {
+  0%, 100% { r: 8; opacity: 0.4; }
+  50% { r: 12; opacity: 0; }
+}
+
+/* GRID */
+.grid-line { stroke: #0a1a0a; stroke-width: 0.5; }
+
+/* ZONE BORDER */
+@keyframes zone-pulse {
+  0%, 100% { stroke-opacity: 0.3; }
+  50% { stroke-opacity: 0.7; }
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  body { flex-direction: column; }
+  .info-panel { width: 100%; height: 45%; border-left: none; border-top: 1px solid var(--border); }
+  .map-container { height: 55%; }
+}
+</style>
+</head>
+<body>
+
+<div class="noise"></div>
+<div class="scanlines"></div>
+
+<div class="map-container">
+<svg class="map-svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <radialGradient id="fogGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="70%" stop-color="transparent"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0.8"/>
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glow-strong">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- BACKGROUND -->
+  <rect width="800" height="600" fill="#030803"/>
+
+  <!-- GRID -->
+  <g opacity="0.3">
+    <line x1="0" y1="100" x2="800" y2="100" class="grid-line"/>
+    <line x1="0" y1="200" x2="800" y2="200" class="grid-line"/>
+    <line x1="0" y1="300" x2="800" y2="300" class="grid-line"/>
+    <line x1="0" y1="400" x2="800" y2="400" class="grid-line"/>
+    <line x1="0" y1="500" x2="800" y2="500" class="grid-line"/>
+    <line x1="100" y1="0" x2="100" y2="600" class="grid-line"/>
+    <line x1="200" y1="0" x2="200" y2="600" class="grid-line"/>
+    <line x1="300" y1="0" x2="300" y2="600" class="grid-line"/>
+    <line x1="400" y1="0" x2="400" y2="600" class="grid-line"/>
+    <line x1="500" y1="0" x2="500" y2="600" class="grid-line"/>
+    <line x1="600" y1="0" x2="600" y2="600" class="grid-line"/>
+    <line x1="700" y1="0" x2="700" y2="600" class="grid-line"/>
+  </g>
+
+  <!-- ZONE BORDER (anomaly perimeter) -->
+  <ellipse cx="400" cy="300" rx="340" ry="260"
+    fill="none" stroke="#ff174433" stroke-width="2" stroke-dasharray="8 4"
+    style="animation: zone-pulse 3s ease-in-out infinite"/>
+  <ellipse cx="400" cy="300" rx="340" ry="260"
+    fill="none" stroke="#ff1744" stroke-width="0.5" opacity="0.2"/>
+
+  <!-- STREETS (simplified) -->
+  <g stroke="#0d1f0d" stroke-width="3" fill="none" opacity="0.6">
+    <!-- Main roads -->
+    <line x1="400" y1="80" x2="400" y2="520"/>
+    <line x1="120" y1="300" x2="680" y2="300"/>
+    <!-- Ring road -->
+    <ellipse cx="400" cy="300" rx="200" ry="150" stroke-width="2"/>
+    <!-- Diagonals -->
+    <line x1="200" y1="150" x2="400" y2="300"/>
+    <line x1="600" y1="150" x2="400" y2="300"/>
+    <line x1="200" y1="450" x2="400" y2="300"/>
+    <line x1="600" y1="450" x2="400" y2="300"/>
+    <!-- Side streets -->
+    <line x1="250" y1="200" x2="550" y2="200"/>
+    <line x1="250" y1="400" x2="550" y2="400"/>
+    <line x1="250" y1="150" x2="250" y2="450"/>
+    <line x1="550" y1="150" x2="550" y2="450"/>
+  </g>
+
+  <!-- BLOCKS (building areas) -->
+  <g fill="#0a140a" stroke="#0d1f0d" stroke-width="0.5" opacity="0.5">
+    <rect x="280" y="130" width="60" height="40" rx="2"/>
+    <rect x="460" y="130" width="60" height="40" rx="2"/>
+    <rect x="160" y="230" width="50" height="50" rx="2"/>
+    <rect x="590" y="230" width="50" height="50" rx="2"/>
+    <rect x="280" y="340" width="80" height="40" rx="2"/>
+    <rect x="480" y="360" width="60" height="40" rx="2"/>
+    <rect x="160" y="380" width="50" height="40" rx="2"/>
+    <rect x="310" y="440" width="70" height="35" rx="2"/>
+    <rect x="500" y="440" width="50" height="35" rx="2"/>
+  </g>
+
+  <!-- RIVER (small, through the city) -->
+  <path d="M 100 180 Q 200 200 300 190 Q 400 175 500 200 Q 600 230 700 210"
+    fill="none" stroke="#0a2a3a" stroke-width="8" opacity="0.4"/>
+  <path d="M 100 180 Q 200 200 300 190 Q 400 175 500 200 Q 600 230 700 210"
+    fill="none" stroke="#1a4a6a" stroke-width="1" opacity="0.3"/>
+
+  <!-- PARK (green area) -->
+  <ellipse cx="320" cy="370" rx="30" ry="20" fill="#0a1a0a" stroke="#1a3a1a" stroke-width="0.5"/>
+
+  <!-- ====== LOCATIONS ====== -->
+
+  <!-- 1. СОБОР (центр, эпицентр) -->
+  <g class="loc-group" onclick="showLocation('cathedral')" data-id="cathedral">
+    <circle cx="400" cy="290" r="14" fill="#1a0000" stroke="#ff1744" stroke-width="1.5" opacity="0.3">
+      <animate attributeName="r" values="14;20;14" dur="2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.3;0;0.3" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle class="loc-dot" cx="400" cy="290" r="6" fill="#ff1744" filter="url(#glow-strong)"/>
+    <circle class="loc-ring" cx="400" cy="290" r="10" fill="none" stroke="#ff1744" stroke-width="1" opacity="0"/>
+    <text class="loc-label" x="400" y="275" text-anchor="middle" fill="#ff1744" font-family="Orbitron" font-size="9" font-weight="700" letter-spacing="1">СОБОР</text>
+    <text x="400" y="310" text-anchor="middle" fill="#aa3333" font-size="7" letter-spacing="1">ЭПИЦЕНТР</text>
+  </g>
+
+  <!-- 2. ПРАВОСЛАВНАЯ ЦЕРКОВЬ (окраина, юго-восток) -->
+  <g class="loc-group" onclick="showLocation('orthodox')" data-id="orthodox">
+    <circle cx="620" cy="430" r="8" fill="none" stroke="#42a5f5" stroke-width="1">
+      <animate attributeName="r" values="8;12;8" dur="3s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.4;0;0.4" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle class="loc-dot" cx="620" cy="430" r="5" fill="#42a5f5" filter="url(#glow)"/>
+    <text class="loc-label" x="620" y="450" text-anchor="middle" fill="#42a5f5" font-family="Orbitron" font-size="8" letter-spacing="1">ЦЕРКОВЬ</text>
+    <text x="620" y="460" text-anchor="middle" fill="#1a5a8a" font-size="6" letter-spacing="1">ЧИСТАЯ ЗОНА</text>
+  </g>
+
+  <!-- 3. БОЛЬНИЦА (северо-запад) -->
+  <g class="loc-group" onclick="showLocation('hospital')" data-id="hospital">
+    <circle cx="240" cy="190" r="5" fill="#ab47bc" filter="url(#glow)"/>
+    <circle cx="240" cy="190" r="9" fill="none" stroke="#ab47bc" stroke-width="0.8" opacity="0.4">
+      <animate attributeName="r" values="9;13;9" dur="2.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.4;0;0.4" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+    <text class="loc-label" x="240" y="178" text-anchor="middle" fill="#ab47bc" font-family="Orbitron" font-size="8" letter-spacing="1">БОЛЬНИЦА</text>
+    <text x="240" y="208" text-anchor="middle" fill="#7a3a8a" font-size="6">АРХОНТ: ХИРУРГ</text>
+  </g>
+
+  <!-- 4. ШКОЛА (восток) -->
+  <g class="loc-group" onclick="showLocation('school')" data-id="school">
+    <circle cx="560" cy="220" r="5" fill="#ab47bc" filter="url(#glow)"/>
+    <circle cx="560" cy="220" r="9" fill="none" stroke="#ab47bc" stroke-width="0.8" opacity="0.4">
+      <animate attributeName="r" values="9;13;9" dur="2.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.4;0;0.4" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+    <text class="loc-label" x="560" y="208" text-anchor="middle" fill="#ab47bc" font-family="Orbitron" font-size="8" letter-spacing="1">ШКОЛА №3</text>
+    <text x="560" y="238" text-anchor="middle" fill="#7a3a8a" font-size="6">АРХОНТ: УЧИТЕЛЬ</text>
+  </g>
+
+  <!-- 5. СУД / ПРОКУРАТУРА (юго-запад) -->
+  <g class="loc-group" onclick="showLocation('court')" data-id="court">
+    <circle cx="240" cy="400" r="5" fill="#ab47bc" filter="url(#glow)"/>
+    <circle cx="240" cy="400" r="9" fill="none" stroke="#ab47bc" stroke-width="0.8" opacity="0.4">
+      <animate attributeName="r" values="9;13;9" dur="2.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.4;0;0.4" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+    <text class="loc-label" x="240" y="388" text-anchor="middle" fill="#ab47bc" font-family="Orbitron" font-size="8" letter-spacing="1">ПРОКУРАТУРА</text>
+    <text x="240" y="418" text-anchor="middle" fill="#7a3a8a" font-size="6">АРХОНТ: СУДЬЯ</text>
+  </g>
+
+  <!-- 6. ПОЛИЦЕЙСКИЙ УЧАСТОК (север) -->
+  <g class="loc-group" onclick="showLocation('police')" data-id="police">
+    <circle class="loc-dot" cx="460" cy="170" r="4" fill="#ffa000" filter="url(#glow)"/>
+    <text class="loc-label" x="460" y="160" text-anchor="middle" fill="#ffa000" font-family="Orbitron" font-size="8" letter-spacing="1">ПОЛИЦИЯ</text>
+  </g>
+
+  <!-- 7. ДЕТСКИЙ САД (юг, рядом с парком) -->
+  <g class="loc-group" onclick="showLocation('kindergarten')" data-id="kindergarten">
+    <circle class="loc-dot" cx="350" cy="430" r="4" fill="#ff1744" filter="url(#glow)"/>
+    <text class="loc-label" x="350" y="448" text-anchor="middle" fill="#ff1744" font-family="Orbitron" font-size="8" letter-spacing="1">ДЕТСКИЙ САД</text>
+  </g>
+
+  <!-- 8. СКВЕР / ПАРК -->
+  <g class="loc-group" onclick="showLocation('park')" data-id="park">
+    <circle class="loc-dot" cx="320" cy="370" r="4" fill="#daa520" filter="url(#glow)"/>
+    <text class="loc-label" x="320" y="358" text-anchor="middle" fill="#daa520" font-family="Orbitron" font-size="8" letter-spacing="1">СКВЕР</text>
+  </g>
+
+  <!-- 9. ЛОГОВО МАГА (подвал жилого дома, запад) -->
+  <g class="loc-group" onclick="showLocation('mage')" data-id="mage">
+    <circle class="loc-dot" cx="170" cy="300" r="4" fill="#daa520" filter="url(#glow)"/>
+    <text class="loc-label" x="170" y="288" text-anchor="middle" fill="#daa520" font-family="Orbitron" font-size="8" letter-spacing="1">ЛОГОВО МАГА</text>
+  </g>
+
+  <!-- 10. ТОЧКА ВХОДА (место засады, северо-восток, на границе зоны) -->
+  <g class="loc-group" onclick="showLocation('entry')" data-id="entry">
+    <circle class="loc-dot" cx="600" cy="130" r="4" fill="#4caf50" filter="url(#glow)"/>
+    <text class="loc-label" x="600" y="118" text-anchor="middle" fill="#4caf50" font-family="Orbitron" font-size="8" letter-spacing="1">ТОЧКА ВХОДА</text>
+    <text x="600" y="145" text-anchor="middle" fill="#2a6a2a" font-size="6">ЗАСАДА</text>
+  </g>
+
+  <!-- 11. ПРОМЗОНА (юго-запад, на окраине) -->
+  <g class="loc-group" onclick="showLocation('industrial')" data-id="industrial">
+    <circle class="loc-dot" cx="150" cy="460" r="4" fill="#ffa000" filter="url(#glow)"/>
+    <text class="loc-label" x="150" y="478" text-anchor="middle" fill="#ffa000" font-family="Orbitron" font-size="8" letter-spacing="1">ПРОМЗОНА</text>
+  </g>
+
+  <!-- 12. ЛАГЕРЬ СЕКТЫ (между собором и эпицентром, подвал рядом) -->
+  <g class="loc-group" onclick="showLocation('cultcamp')" data-id="cultcamp">
+    <circle class="loc-dot" cx="440" cy="330" r="4" fill="#ff1744" filter="url(#glow)"/>
+    <text class="loc-label" x="475" y="335" text-anchor="start" fill="#ff1744" font-family="Orbitron" font-size="8" letter-spacing="1">ЛАГЕРЬ СЕКТЫ</text>
+  </g>
+
+  <!-- КОНВЕРТОПЛАН (за зоной, восток) -->
+  <g class="loc-group" onclick="showLocation('vtol')" data-id="vtol">
+    <polygon points="745,90 755,80 765,90 760,90 760,100 750,100 750,90" fill="#00ff41" filter="url(#glow)"/>
+    <text x="755" y="112" text-anchor="middle" fill="#00ff41" font-family="Orbitron" font-size="7" letter-spacing="1">КОНВЕРТОПЛАН</text>
+    <text x="755" y="122" text-anchor="middle" fill="#00aa2a" font-size="6">ВНЕ ЗОНЫ</text>
+  </g>
+
+  <!-- МАРШРУТЫ (пунктирные линии между ключевыми точками) -->
+  <g stroke="#1a3a1a" stroke-width="1" stroke-dasharray="4 3" fill="none" opacity="0.4">
+    <line x1="600" y1="130" x2="560" y2="220"/>
+    <line x1="560" y1="220" x2="400" y2="290"/>
+    <line x1="240" y1="190" x2="400" y2="290"/>
+    <line x1="240" y1="400" x2="320" y2="370"/>
+    <line x1="320" y1="370" x2="400" y2="290"/>
+    <line x1="400" y1="290" x2="620" y2="430"/>
+    <line x1="170" y1="300" x2="240" y2="400"/>
+    <line x1="460" y1="170" x2="400" y2="290"/>
+    <line x1="350" y1="430" x2="320" y2="370"/>
+    <line x1="150" y1="460" x2="240" y2="400"/>
+  </g>
+
+  <!-- COMPASS -->
+  <g transform="translate(60, 550)">
+    <circle r="20" fill="none" stroke="var(--border)" stroke-width="0.5"/>
+    <line x1="0" y1="-18" x2="0" y2="18" stroke="#1a3a1a" stroke-width="0.5"/>
+    <line x1="-18" y1="0" x2="18" y2="0" stroke="#1a3a1a" stroke-width="0.5"/>
+    <text x="0" y="-22" text-anchor="middle" fill="var(--green)" font-size="8" font-family="Orbitron">N</text>
+    <polygon points="0,-16 -3,-8 3,-8" fill="var(--green)" opacity="0.6"/>
+  </g>
+
+  <!-- SCALE -->
+  <g transform="translate(660, 560)">
+    <line x1="0" y1="0" x2="80" y2="0" stroke="var(--text-dim)" stroke-width="1"/>
+    <line x1="0" y1="-3" x2="0" y2="3" stroke="var(--text-dim)" stroke-width="1"/>
+    <line x1="80" y1="-3" x2="80" y2="3" stroke="var(--text-dim)" stroke-width="1"/>
+    <text x="40" y="12" text-anchor="middle" fill="var(--text-dim)" font-size="8">~1 км</text>
+  </g>
+
+  <!-- TITLE -->
+  <text x="400" y="30" text-anchor="middle" fill="var(--green)" font-family="Orbitron" font-size="11" font-weight="700" letter-spacing="3" opacity="0.6">СКОБЕЛЕВСК — КАРТА ОПЕРАЦИИ</text>
+  <text x="400" y="45" text-anchor="middle" fill="var(--text-dim)" font-size="8" letter-spacing="2">КАЛИНИНГРАДСКАЯ ОБЛАСТЬ • ЗОНА ИНФЕРНО • КЛАСС А-1</text>
+
+  <!-- VIGNETTE -->
+  <rect width="800" height="600" fill="url(#fogGrad)"/>
+</svg>
+</div>
+
+<!-- INFO PANEL -->
+<div class="info-panel">
+  <div class="panel-header">ДАННЫЕ ЛОКАЦИИ</div>
+  <div class="panel-content" id="panelContent">
+    <h2>ВЫБЕРИТЕ ТОЧКУ НА КАРТЕ</h2>
+    <p style="color:var(--text-dim)">Нажмите на любую локацию для просмотра информации.</p>
+    <br>
+    <h3>Легенда</h3>
+    <p><span style="color:#ff1744">&#9679;</span> Красный пульсирующий — эпицентр / высокая опасность</p>
+    <p><span style="color:#ab47bc">&#9679;</span> Фиолетовый пульсирующий — домен Архонта</p>
+    <p><span style="color:#42a5f5">&#9679;</span> Синий пульсирующий — Чистая Зона</p>
+    <p><span style="color:#daa520">&#9679;</span> Золотой — NPC / особая локация</p>
+    <p><span style="color:#ffa000">&#9679;</span> Янтарный — ресурсы / лут</p>
+    <p><span style="color:#4caf50">&#9679;</span> Зелёный — стартовая / безопасная</p>
+    <p><span style="color:#00ff41">&#9650;</span> Ярко-зелёный — конвертоплан (вне зоны)</p>
+    <p style="color:var(--text-dim);font-size:11px;margin-top:16px">Пунктирные линии — основные маршруты. Между локациями — случайные ивенты.</p>
+  </div>
+  <div class="status-bar">
+    <span>ЛОКАЦИЙ: <span class="val">12</span></span>
+    <span>АРХОНТОВ: <span class="val" style="color:var(--purple)">3</span></span>
+    <span>ЧИСТЫХ ЗОН: <span class="val" style="color:#42a5f5">1</span></span>
+  </div>
+</div>
+
+<script>
+const locations = {
+  cathedral: {
+    name: 'ГОТИЧЕСКИЙ СОБОР',
+    tags: ['danger', 'ЭПИЦЕНТР', 'archon', 'ИЕРОФАНТ', 'lore', 'КАПИЩЕ'],
+    desc: 'Центр города. Одно из «чудес Европы» — превосходит Страсбургский собор. Центр манифестации Инферно.',
+    sections: [
+      { title: 'Крипта', text: 'Под собором — древнее языческое капище. Храм Древних Богов. Место, где брана истончена. Здесь — Врата. Здесь стоит Иерофант.' },
+      { title: 'Иерофант — Отец Бернар Кляйн', text: 'Католический священник, 60 лет. Движим любовью. Разочаровался в Боге. Архитектор ритуала. Не Архонт — выше. Достижим только после уничтожения трёх Архонтов.' },
+      { title: 'Геймплей', text: 'Финальная локация. Здесь происходят: диалоговый поединок с Иерофантом (без Кота), явление Михаила (с Котом), вызов «Овода» (огонь на себя). Многослойная — собор → крипта → капище → Врата.' },
+      { title: 'Сцены', text: '• Вход в собор — описание разрушенного величия\n• Спуск в крипту — нарастание ужаса\n• Капище — языческие барельефы, разлом, Врата\n• Иерофант — проекция ангела, золотой свет, демоны с ангельскими чертами' }
+    ]
+  },
+  orthodox: {
+    name: 'ПРАВОСЛАВНАЯ ЦЕРКОВЬ',
+    tags: ['safe', 'ЧИСТАЯ ЗОНА', 'lore', 'ВКЛ'],
+    desc: 'Окраина города. Древняя церковь-крепость с цилиндрическими куполами, эпохи Великого Княжества Литовского.',
+    sections: [
+      { title: 'Отец Григорий', text: 'Православный священник. Стар, ранен, устал. Держит Святую Землю молитвой. «Спасите ребёнка, не меня.» Если свести с 11 ополченцами — литургия, освящение оружия.' },
+      { title: 'Чистая Зона', text: 'Единственное полностью безопасное место в городе. Стресс снижается. Искажение не растёт. Здесь можно отдохнуть, поговорить, перегруппироваться.' },
+      { title: 'Геймплей', text: '• Безопасная зона (пока Григорий жив и молится)\n• Литургия: 11+ человек + Григорий = освящённое оружие\n• Кандидат на эвакуацию капсулой (собор = постоянная Чистая Зона)\n• Романтические моменты — разговоры с Катей в безопасности' },
+      { title: 'Сцены', text: '• Первый приход — контраст тишины с хаосом снаружи\n• Литургия — ключевая сцена для концовки «12 Апостолов»\n• «Тушёнка» — Катя ест и описывает вкус. Лучшее что она ела в жизни' }
+    ]
+  },
+  hospital: {
+    name: 'ГОРОДСКАЯ БОЛЬНИЦА №1',
+    tags: ['archon', 'ХИРУРГ', 'danger', 'ВЫСОКАЯ ОПАСНОСТЬ'],
+    desc: 'Северо-западная часть города. Домен Архонта-2 (Хирург — Валерий Осокин, 64).',
+    sections: [
+      { title: 'Архонт: Хирург', text: 'Бывший главврач. Двойная трагедия: сестра (онко, 90-е) + ребёнок-пациент (ошибка на операции). Безумие медицинское: «Я их вылечу. Всех.» Кажется разумным. Не является.' },
+      { title: 'Трансформированные', text: 'Медперсонал: сёстры с руками-хваталками, хирурги с тремя руками (третья — жало из-за спины). Каталки катаются сами. Мониторы пищат ритмом нежити.' },
+      { title: 'Якорь', text: 'Стетоскоп. Старый, советский. Тот самый, которым слушал сестру в последний раз. На шее поверх трансформированного халата.' },
+      { title: 'Сцены', text: '• Приёмная — тела на каталках, но не все мертвы\n• Операционная — Осокин «оперирует». Спокойно объясняет процедуру\n• Предложение сделки: «Дайте мне работать»\n• Уничтожение якоря — стетоскоп ломается, Осокин кричит сестру по имени' }
+    ]
+  },
+  school: {
+    name: 'ШКОЛА №3',
+    tags: ['archon', 'УЧИТЕЛЬ', 'danger', 'ВЫСОКАЯ ОПАСНОСТЬ'],
+    desc: 'Восточная часть города. Домен Архонта-1 (Учитель — Андрей Лещенко, 52).',
+    sections: [
+      { title: 'Архонт: Учитель', text: 'Школьный учитель истории. Жена и дочь погибли в ДТП, виновник отделался условным. Безумие педагогическое: «Сядьте. Послушайте.»' },
+      { title: 'Трансформированные', text: 'Ученики в школьной форме. Ходят строем. Несут учебники — белые страницы. Если открыть — личная информация Громовой.' },
+      { title: 'Якорь', text: 'Медальон с фотографиями жены и дочери. Выцвели. Он смотрит на них между «уроками».' },
+      { title: 'Сцены', text: '• Школьный двор — звонок на урок, но школа мертва\n• Класс — Лещенко читает лекцию трансформированным. Тихо, методично\n• Учебник — Катя находит свои данные. «Откуда они...»\n• Медальон — момент тишины перед уничтожением' }
+    ]
+  },
+  court: {
+    name: 'ЗДАНИЕ ПРОКУРАТУРЫ',
+    tags: ['archon', 'СУДЬЯ', 'danger', 'ВЫСОКАЯ ОПАСНОСТЬ'],
+    desc: 'Юго-западная часть. Домен Архонта-3 (Судья — Дмитрий Вершинин, 57).',
+    sections: [
+      { title: 'Архонт: Судья', text: 'Старший следователь. 25 лет. Трижды подписал ложное обвинение. Один повесился. Жена ушла. Безумие юридическое: абсолютная справедливость.' },
+      { title: 'Трансформированные', text: 'Осуждённые в наручниках из плоти. Цепочками. Среди них — могут быть «члены Гаммы». Узнают Катю.' },
+      { title: 'Якорь', text: 'Гербовая печать следователя. Вплавлена в стол. Та самая.' },
+      { title: 'Геймплей', text: 'САМЫЙ ОПАСНЫЙ в диалоге. Задаёт вопросы. Честный ответ — пропускает. Ложь — мгновенная казнь. Один неверный выбор реплики = атака.' },
+      { title: 'Сцены', text: '• Коридор — этапированные цепочки\n• Зал суда — Вершинин за столом, тишина, вопрос\n• Допрос: «Подсудимая. Имя. Звание. Цель проникновения»\n• Приговор — если честно ответить на все вопросы' }
+    ]
+  },
+  police: {
+    name: 'ПОЛИЦЕЙСКИЙ УЧАСТОК',
+    tags: ['warning', 'ЛУТ', 'lore', 'ЗАПИСКИ'],
+    desc: 'Северная часть города. Ресурсная локация + лор.',
+    sections: [
+      { title: 'Лут', text: '• Оружие (пистолеты, патроны 9x19)\n• Бронежилет (редко)\n• Патроны для автомата' },
+      { title: 'Лор', text: 'Записки с допросов — информация о секте, её деятельности до прорыва. Протоколы о «странных происшествиях» за последние месяцы. Подсказки к местонахождению Архонтов.' },
+      { title: 'Сцены', text: '• Дежурная часть — тела, перевёрнутые столы\n• Камеры — открыты, пусты. Или не пусты\n• Архив — папки. Среди них — дело на Лещенко (Учитель)' }
+    ]
+  },
+  kindergarten: {
+    name: 'ДЕТСКИЙ САД «СОЛНЫШКО»',
+    tags: ['danger', 'ХОРРОР', 'danger', 'ДЕТИ-ТЕНИ'],
+    desc: 'Южная часть, рядом со сквером. Одна из самых страшных локаций.',
+    sections: [
+      { title: 'Дети-тени', text: 'Двумерные силуэты на стенах. Играют, смеются. Приглашают «поиграть». Чем дольше контакт — тем живее дети, тем площе Катя. Полное оживление = Катя становится тенью. Game over.' },
+      { title: 'Механика', text: 'Единственная защита — УЙТИ. Не стрелять (они дети). Не смотреть долго. Тикающий таймер пребывания. Искажение растёт быстро.' },
+      { title: 'Сцены', text: '• Вход — рисунки на стенах. Солнышко, домик. Как у всех\n• Группа — маленькие стульчики, игрушки. Тени на стенах шевелятся\n• «Игра» — детский голос: «Тётя! Поиграй с нами!»\n• Если задержаться: «Тётя, не уходи. Тут так одиноко...»' }
+    ]
+  },
+  park: {
+    name: 'ГОРОДСКОЙ СКВЕР',
+    tags: ['lore', 'РАДМИЛА', 'warning', 'ВСТРЕЧИ'],
+    desc: 'Центральный парк. Место встреч с NPC и явлений Радмилы.',
+    sections: [
+      { title: 'Радмила', text: 'Появляется здесь чаще всего. Золотой свет, помехи уменьшаются. Загадки, подсказки. «Не всё, что плачет — дитя.»' },
+      { title: 'Охотники Тимура', text: 'Первая встреча — здесь или рядом. Тимур настороже, не доверяет «федералам». Нужно убедить.' },
+      { title: 'Сцены', text: '• Скамейка — Катя садится отдохнуть. «Тут... почти нормально. Почти»\n• Фонтан — не работает. Или работает наоборот (вода вверх)\n• Явление Радмилы — золотой свет сквозь деревья\n• Встреча с девочкой-одержимой — она сидит на качелях' }
+    ]
+  },
+  mage: {
+    name: 'ЛОГОВО МАГА',
+    tags: ['lore', 'NPC', 'warning', 'ДРЕВНИЕ БОГИ'],
+    desc: 'Подвал жилого дома на западной окраине. Корнелий Генрихович — «Великий маг».',
+    sections: [
+      { title: 'Корнелий Генрихович', text: 'Неприятный, высокомерный старик. Кладезь информации о ритуале, Древних, капище. «Вы, конечно, не понимаете, но...»' },
+      { title: 'Знания', text: '• Фрагменты контр-ритуала\n• Информация об Архонтах и их якорях\n• История капища под собором\n• Возможность призвать Древних Богов (ОПАСНО)' },
+      { title: 'Геймплей', text: 'Кандидат на эвакуацию капсулой: на базе ОПИ извлекут информацию → бонусы. Может предложить призвать Древних — отдельная концовка (Древние не остановятся).' },
+      { title: 'Сцены', text: '• Вход — обычный подъезд, но дверь подвала покрыта символами\n• Подвал — книги, свечи, чертежи. Вонь. Кошки\n• Торг: «Что вы мне предложите за информацию?»\n• Ритуал Древних — если игрок согласится' }
+    ]
+  },
+  entry: {
+    name: 'ТОЧКА ВХОДА',
+    tags: ['safe', 'СТАРТ', 'lore', 'ЗАСАДА'],
+    desc: 'Северо-восток, на границе зоны. Место, где группа «Гамма» вошла в туман. Место засады.',
+    sections: [
+      { title: 'Событие', text: 'Здесь погибла группа. Тела (если не трансформированы) лежат в том положении, в котором их застала смерть. Оружие, снаряжение — частично пригодно.' },
+      { title: 'Лут', text: '• Патроны\n• Медикит (возможно)\n• Снаряжение группы (если успеть до трансформации тел)' },
+      { title: 'Сцены', text: '• Начало основной игры — Катя одна, вокруг тела\n• «Ты здесь? Скажи что ты здесь» — первые слова после тишины\n• Возвращение (если игрок направит) — тела могут быть уже не там' }
+    ]
+  },
+  industrial: {
+    name: 'ПРОМЗОНА',
+    tags: ['warning', 'ЛУТ', 'danger', 'ОПАСНОСТЬ'],
+    desc: 'Юго-западная окраина. Заводы, склады, гаражи.',
+    sections: [
+      { title: 'Лут', text: '• Оружие (арматура, топоры, возможно охотничьи ружья)\n• Инструменты\n• Топливо (для чего-нибудь)\n• Химические осветители' },
+      { title: 'Опасность', text: 'Тесные помещения, плохая видимость. Трансформированные рабочие — сильнее обычных горожан. Возможна засада.' },
+      { title: 'Сцены', text: '• Склад — ящики, тишина, что-то капает\n• Гаражи — машины с открытыми дверями. Кто-то бежал\n• Находка: тело ополченца с дневником — информация об охотниках Тимура' }
+    ]
+  },
+  cultcamp: {
+    name: 'ЛАГЕРЬ СЕКТЫ',
+    tags: ['danger', 'ЛОР', 'lore', 'РИТУАЛ'],
+    desc: 'Рядом с собором. Заброшенное здание, используемое сектой как база.',
+    sections: [
+      { title: 'Лор', text: '• Записки ритуала — фрагменты контр-ритуала\n• Карта с отметками Архонтов\n• Дневник Иерофанта — до трансформации. Читается как исповедь\n• Символы гностицизма на стенах' },
+      { title: 'Геймплей', text: 'Ключевая информационная локация. Здесь собираются фрагменты контр-ритуала. Без них — невозможно закрыть Врата в «обычных» концовках.' },
+      { title: 'Сцены', text: '• Вход — алтарь из подручных материалов, свечи (горят)\n• Записки — каждая от имени адепта. Истории вступления в секту\n• Дневник Бернара — самый сильный текст. «Господи, прости меня за то, что я собираюсь сделать. И прости себя за то, что вынудил»' }
+    ]
+  },
+  vtol: {
+    name: 'КОНВЕРТОПЛАН',
+    tags: ['safe', 'ВНЕ ЗОНЫ', 'lore', 'УЧЁНЫЙ'],
+    desc: 'За границей аномалии. Персональная машина Учёного. Отсюда идёт координация.',
+    sections: [
+      { title: 'Оборудование', text: '• Факел-12 (квантовый коммуникатор)\n• 10 дронов на стойках\n• Грузы (наноаптечки, боеприпасы, рационы)\n• Джамп-капсула (когда разблокирована)\n• Бортовой компьютер' },
+      { title: 'Учёный', text: 'Здесь сидит игрок. Ранен. Умирает медленно. Координирует через экран. Каждый запуск дрона — физическая нагрузка (15 кг, одному, с осколками в боку).' },
+      { title: 'Перемещение', text: 'Зона расширяется. Бортовой компьютер: расстояние до границы, скорость расширения, запас топлива. Может потребоваться экстренный перелёт.' }
+    ]
+  }
+};
+
+function showLocation(id) {
+  const loc = locations[id];
+  if (!loc) return;
+
+  // Highlight active
+  document.querySelectorAll('.loc-group').forEach(g => g.classList.remove('active'));
+  const el = document.querySelector(`.loc-group[data-id="${id}"]`);
+  if (el) el.classList.add('active');
+
+  let html = `<h2>${loc.name}</h2>`;
+  html += `<div style="margin-bottom:12px">`;
+  for (let i = 0; i < loc.tags.length; i += 2) {
+    html += `<span class="tag ${loc.tags[i]}">${loc.tags[i+1]}</span>`;
+  }
+  html += `</div>`;
+  html += `<p>${loc.desc}</p>`;
+
+  for (const s of loc.sections) {
+    html += `<h3>${s.title}</h3>`;
+    html += `<p>${s.text.replace(/\n/g, '<br>')}</p>`;
+  }
+
+  document.getElementById('panelContent').innerHTML = html;
+}
+
+// Auto-select cathedral on load
+window.addEventListener('load', () => {
+  showLocation('cathedral');
+});
+</script>
+
+</body>
+</html>
