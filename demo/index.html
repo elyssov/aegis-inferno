@@ -27,7 +27,8 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;b
 
 /* LORE */
 #loreScreen{position:absolute;inset:0;background:var(--lore-bg);display:none;flex-direction:column;z-index:190;overflow:hidden}
-.lore-scroll{flex:1;overflow-y:auto;padding:60px 28px 100px;scroll-behavior:smooth}
+.lore-scroll{flex:1;overflow-y:hidden;padding:60px 28px 100px;scroll-behavior:smooth}
+.lore-scroll.manual{overflow-y:auto}
 .lore-scroll::-webkit-scrollbar{width:2px}.lore-scroll::-webkit-scrollbar-thumb{background:#333}
 .lore-scroll h2{font-family:'Orbitron',sans-serif;font-size:16px;color:var(--lore-accent);letter-spacing:3px;text-transform:uppercase;margin:40px 0 16px;text-align:center}
 .lore-scroll p{font-size:14px;line-height:1.8;color:var(--lore-text);margin-bottom:12px;text-align:center}
@@ -559,9 +560,11 @@ function show(id){
 function go(lang){L=lang;showLore()}
 
 // LORE
+let loreAutoScroll=null;
 function showLore(){
   show('loreScreen');
   const b=document.getElementById('loreBox');
+  b.classList.remove('manual');
   let h='';
   for(const i of t('lore')){
     if(i.t==='year')h+=`<div class="year">${i.x}</div>`;
@@ -569,8 +572,29 @@ function showLore(){
     else if(i.t==='p')h+=`<p>${i.x}</p>`;
     else if(i.t==='m')h+=`<div class="media-slot"><span class="ph">[IMG: ${i.x}]</span></div>`;
   }
+  // Extra padding at bottom so text scrolls fully through
+  h+='<div style="height:60vh"></div>';
   b.innerHTML=h;
-  const s=document.getElementById('skipLore');s.textContent=t('skip');s.onclick=showDiary;
+  // Auto-scroll
+  b.scrollTop=0;
+  loreAutoScroll=setInterval(()=>{
+    b.scrollTop+=1;
+    // If scrolled to end, stop
+    if(b.scrollTop>=b.scrollHeight-b.clientHeight){
+      clearInterval(loreAutoScroll);loreAutoScroll=null;
+    }
+  },40);
+  // On click/touch — switch to manual
+  const stopAuto=()=>{
+    if(loreAutoScroll){clearInterval(loreAutoScroll);loreAutoScroll=null}
+    b.classList.add('manual');
+    b.removeEventListener('pointerdown',stopAuto);
+    b.removeEventListener('wheel',stopAuto);
+  };
+  b.addEventListener('pointerdown',stopAuto);
+  b.addEventListener('wheel',stopAuto);
+  const s=document.getElementById('skipLore');s.textContent=t('skip');
+  s.onclick=()=>{if(loreAutoScroll){clearInterval(loreAutoScroll);loreAutoScroll=null}showDiary()};
 }
 
 // DIARY
