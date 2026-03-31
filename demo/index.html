@@ -1250,7 +1250,7 @@ async function runOfficeChat() {
         if (herIdx < herMsgs.length) {
           const resp = herMsgs[herIdx];
           showTyping('her', true);
-          await sleep(resp.delay || 2000 + Math.random() * 2000);
+          await sleep(resp.delay ? resp.delay/2 : 1000 + Math.random() * 1000);
           showTyping('her', false);
           const text = resp.variants ? resp.variants[choiceIndex] : resp.text;
           addBubble('her', t('herName'), text);
@@ -1274,7 +1274,7 @@ async function runOfficeChat() {
             if (herIdx < herMsgs.length) {
               const resp = herMsgs[herIdx];
               showTyping('her', true);
-              await sleep(resp.delay || 1500);
+              await sleep(resp.delay ? resp.delay/2 : 800);
               showTyping('her', false);
               const text = resp.variants ? resp.variants[choiceIndex] : resp.text;
               addBubble('her', t('herName'), text);
@@ -1282,7 +1282,7 @@ async function runOfficeChat() {
             }
           } else {
             showTyping('her', true);
-            await sleep(1000 + Math.random() * 1500);
+            await sleep(500 + Math.random() * 700);
             showTyping('her', false);
             addBubble('her', m.from === 'her' ? t('herName') : 'system', m.text);
             herIdx++;
@@ -1291,7 +1291,7 @@ async function runOfficeChat() {
         break;
       } else {
         showTyping('her', true);
-        await sleep(1500 + Math.random() * 3000);
+        await sleep(700 + Math.random() * 1500);
         showTyping('her', false);
         addBubble('her', t('herName'), msg.text);
         herIdx++;
@@ -1303,7 +1303,7 @@ async function runOfficeChat() {
         addBubble('group', 'system', msg.text);
         groupIdx++;
         while (groupIdx < groupMsgs.length) {
-          await sleep(800 + Math.random() * 1500);
+          await sleep(400 + Math.random() * 700);
           const m = groupMsgs[groupIdx];
           addBubble('group', m.from, m.text);
           groupIdx++;
@@ -1315,17 +1315,17 @@ async function runOfficeChat() {
         continue;
       }
       showTyping('group', true);
-      await sleep(1000 + Math.random() * 3000);
+      await sleep(500 + Math.random() * 1500);
       showTyping('group', false);
       addBubble('group', msg.from, msg.text);
       groupIdx++;
     }
 
-    await sleep(500 + Math.random() * 1500);
+    await sleep(300 + Math.random() * 700);
   }
 
   // Transition to cutscene: boarding
-  await sleep(2000);
+  await sleep(1000);
   showCutscene('boarding', () => {
     runChatSequence('flight');
   });
@@ -1351,21 +1351,21 @@ async function runFlightChat() {
 
     if (msg.variants) {
       showTyping(tab, true);
-      await sleep(msg.delay || 2000);
+      await sleep(msg.delay ? msg.delay/2 : 1000);
       showTyping(tab, false);
       addBubble(tab, from, msg.variants[choiceIndex]);
     } else {
       showTyping(tab, true);
-      await sleep(1500 + Math.random() * 3000);
+      await sleep(700 + Math.random() * 1500);
       showTyping(tab, false);
       addBubble(tab, from, msg.text);
     }
 
-    await sleep(800 + Math.random() * 2000);
+    await sleep(400 + Math.random() * 1000);
   }
 
   // Cutscene: city approach
-  await sleep(2000);
+  await sleep(1000);
   showCutscene('city', () => {
     // Cutscene: impact
     showCutscene('impact', () => {
