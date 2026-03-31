@@ -85,6 +85,38 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;b
 .typing{padding:4px 16px;font-size:12px;color:var(--p-dim);font-style:italic;display:none;flex-shrink:0}
 .typing.vis{display:block}
 
+/* INBOX (Command tab) */
+.inbox{flex:1;overflow-y:auto;padding:8px 0}
+.inbox::-webkit-scrollbar{width:3px}.inbox::-webkit-scrollbar-thumb{background:var(--p-border)}
+.mail-item{padding:12px 16px;border-bottom:1px solid var(--p-border);cursor:pointer;transition:.15s;display:flex;gap:10px;align-items:flex-start}
+.mail-item:hover{background:#f0f4ff}
+.mail-item.unread{background:#f8faff}
+.mail-item.unread .mail-from{font-weight:700}
+.mail-dot{width:8px;height:8px;border-radius:50%;background:var(--p-accent);flex-shrink:0;margin-top:6px}
+.mail-item:not(.unread) .mail-dot{background:transparent}
+.mail-body{flex:1;min-width:0}
+.mail-from{font-size:13px;font-weight:500;color:var(--p-text);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mail-from.angel{color:var(--p-angel)}
+.mail-preview{font-size:12px;color:var(--p-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mail-time{font-size:10px;color:var(--p-dim);flex-shrink:0;margin-top:2px}
+
+/* LETTER VIEW (opened mail) */
+.letter-view{position:absolute;inset:0;background:var(--p-white);z-index:10;display:none;flex-direction:column}
+.letter-view.open{display:flex}
+.letter-hdr{padding:12px 16px;border-bottom:1px solid var(--p-border);flex-shrink:0}
+.letter-back{background:none;border:none;color:var(--p-accent);font-size:14px;cursor:pointer;padding:4px 0;font-family:inherit}
+.letter-from{font-size:16px;font-weight:600;margin:8px 0 4px}
+.letter-from.angel{color:var(--p-angel)}
+.letter-date{font-size:11px;color:var(--p-dim)}
+.letter-body{flex:1;overflow-y:auto;padding:16px;font-size:14px;line-height:1.7;color:var(--p-text)}
+.letter-reply-area{padding:12px 16px;border-top:1px solid var(--p-border);flex-shrink:0}
+.letter-replies{display:flex;flex-direction:column;gap:4px}
+.reply-btn{padding:8px 12px;background:var(--p-mine);border:1px solid var(--p-accent);border-radius:8px;color:var(--p-text);font-size:13px;cursor:pointer;text-align:left;font-family:inherit;transition:.2s}
+.reply-btn:hover{background:#c0daff}
+.reply-btn:disabled{opacity:.5;cursor:default}
+.letter-response{margin-top:12px;padding:10px 12px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;font-size:13px;line-height:1.6;color:var(--p-text);animation:bIn .3s ease-out}
+.letter-response .resp-from{font-weight:600;font-size:12px;color:var(--p-dim);margin-bottom:4px}
+
 /* INPUT AREA */
 .input-area{padding:8px 12px;background:var(--p-white);border-top:1px solid var(--p-border);flex-shrink:0;display:flex;flex-direction:column;gap:6px}
 .choices{display:flex;flex-direction:column;gap:4px}
@@ -150,7 +182,16 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;b
 </div>
 <div class="chat-view" id="vCmd">
 <div class="chat-hdr"><div class="av cmd">C</div><div><div class="ch-name" id="nC"></div></div></div>
-<div class="msgs" id="mCmd"></div>
+<div class="inbox" id="inbox"></div>
+<div class="letter-view" id="letterView">
+  <div class="letter-hdr">
+    <button class="letter-back" id="letterBack">&larr;</button>
+    <div class="letter-from" id="letterFrom"></div>
+    <div class="letter-date" id="letterDate"></div>
+  </div>
+  <div class="letter-body" id="letterBody"></div>
+  <div class="letter-reply-area" id="letterReplyArea"></div>
+</div>
 </div>
 <div class="input-area" id="inputArea">
 <div class="choices" id="choices" style="display:none"></div>
@@ -167,6 +208,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;b
 <script>
 let L='ru',tab='her',gt={h:8,m:15},unread={her:0,grp:0,cmd:0};
 let choiceResolve=null,impatienceTimer=null,choiceIdx=0;
+let mailbox=[],openMailId=null;
 
 const TX={ru:{
 app:'КорпСвязь',sub:'общий режим',tHer:'Она',tGrp:'Группа',tCmd:'Командование',
@@ -217,14 +259,37 @@ diary:[
 // === CHAT SEQUENCES ===
 seq:[
 // Phase 1: Morning smalltalk
-{to:'cmd',f:'Самойлов К.М.',x:'Так держать, сынок. Ещё одно задание — и в загс. Это приказ.'},
-{to:'cmd',f:'HR-отдел',x:'Уважаемый сотрудник! П.7.4 Устава: рекомендуем перевод одного из партнёров. Бланк прилагается.'},
-{to:'cmd',f:'Аналитическая #4417',x:'Скобелевск. Класс Б-3. Возможна эскалация. Потеря связи 6 ч. назад. Омега: «глухая стена».'},
-{to:'cmd',f:'Ангел',x:'Ребята, мне не нравится картинка по Скобелевску. Пси-блок такого уровня я видела один раз — Екатеринославск, за 12 ч до прорыва. Пожалуйста, будьте осторожны 🙏',a:1},
-{to:'cmd',f:'Ангел',x:'Катюш, медосмотр просрочен. Если кадры — код 7741-А. 💛',a:1},
-{to:'cmd',f:'Ангел',x:'Звягинцев! Магнитик из Калининграда — с собором или с янтарём? 😊',a:1},
-{to:'cmd',f:'Снабжение',x:'Заявка #7741 (боеприпасы 9x19 спец.) — одобрена.'},
-{to:'cmd',f:'Снабжение',x:'Заявка #7742 (отпуск, Турция) — рассмотрим после операции.'},
+{mail:1,f:'Самойлов К.М.',x:'Так держать, сынок. Ещё одно задание — и в загс. Это приказ. Я серьёзно. У меня уже от вашего «после следующей миссии» нервный тик. Либо заявление на стол, либо я сам вас обоих за руку отведу. Самойлов.',
+  rr:[
+    {text:'Так точно! Сразу после Скобелевска.',resp:'Вот и славно. Я свидетелем буду. И не спорь. Самойлов.',respFrom:'Самойлов К.М.'},
+    {text:'Кирилл Михайлович, мы думаем...',resp:'Думать будешь на пенсии. А пока — действуй. И береги её. Самойлов.',respFrom:'Самойлов К.М.'},
+    {text:'А можно кольцо через снабжение заказать?',resp:'Хах! Нет. Но я знаю одного ювелира в Москве. После миссии позвони мне. Самойлов.',respFrom:'Самойлов К.М.'}
+  ]},
+{mail:1,f:'HR-отдел',x:'Уважаемый сотрудник! В соответствии с п. 7.4 Устава ОРПП, в связи с выявленным конфликтом интересов (совместная служба лиц, состоящих в личных отношениях), рекомендуем рассмотреть возможность перевода одного из партнёров в параллельное подразделение. Бланк формы 17-Б прилагается. С уважением, Отдел кадров.',
+  rr:[
+    {text:'Принял к сведению.',resp:'Благодарим за ответ. Срок рассмотрения — 30 рабочих дней. Форма 17-Б остаётся в силе.',respFrom:'HR-отдел'},
+    {text:'Может, вы к нам в поле на стажировку? Посмотрите, какие тут «конфликты интересов».',resp:'Ваше предложение зарегистрировано. Передано руководству для ознакомления. (Пометка: «шутник»).',respFrom:'HR-отдел'}
+  ]},
+{mail:1,f:'Аналитическая записка #4417',x:'Скобелевск, Калининградская обл. Класс Б-3. Возможна эскалация до А-1. Потеря связи с местным отделением полиции — 6 часов. Группа предикторов «Омега» докладывает: пси-контакт с зоной невозможен. Цитата: «Глухая стена. Как чёрная дыра. Мы не видим ничего.» Рекомендация: направление оперативной группы для рекогносцировки боем.',
+  rr:[
+    {text:'Запросить архивные данные по Скобелевску.',resp:'Архив: город основан в XIII веке. Готический собор (1287). Инциденты: мелкие хаунтинги (2014, 2019), закрыты чистильщиками. Население: 19 847. Примечание: под собором — предполагаемые подземные сооружения дохристианской эпохи. Не исследованы.',respFrom:'ОПИ (аналитический)'},
+    {text:'Сравнить с Екатеринославском.',resp:'Сходство: 78%. Идентичные признаки: полный пси-блок, потеря связи, отсутствие визуального контакта со спутника. Различие: масштаб. Екатеринославск — ЗАТО, 5000 чел. Скобелевск — открытый город, 20 000. Если аналогия верна — ситуация значительно серьёзнее. РЕКОМЕНДАЦИЯ: усиленный состав, дежурный борт с тактическим спецбоеприпасом.',respFrom:'ОПИ (аналитический)'}
+  ]},
+{mail:1,f:'ИИ ГАС «Анжела» (Ангел)',x:'Ребята, я посмотрела всю аналитику по Скобелевску за последние десять лет. Мне не нравится картинка. Пси-блок такого уровня я видела один раз — Екатеринославск, за 12 часов до прорыва. Совпадение паттернов — 78%, и это МАЛО для успокоения. Пожалуйста, будьте осторожны. Если что-то пойдёт не так — я буду мониторить все доступные каналы. 🙏💛 Ваш Ангел.',a:1,
+  rr:[
+    {text:'Спасибо, Ангел. Мы будем осторожны.',resp:'Я знаю, что будете. Вы лучшая группа в ОРПП. Просто... вернитесь все. Пожалуйста. 💕 И скажи Кате — медосмотр код 7741-А, если кадры прицепятся.',respFrom:'Ангел'},
+    {text:'78% — это прорыв?',resp:'78% совпадения паттернов — это зона уверенности «вероятен прорыв класса А». Не гарантия. Но я бы не стала ставить на оставшиеся 22%. Будьте готовы к худшему. И Звягинцеву передай — магнитик с собором или с янтарём? 😊',respFrom:'Ангел'},
+    {text:'Ангел, а ты можешь пробиться через блок?',resp:'Пробовала. Трижды. Мои процессы отскакивают как от стены. Это не электромагнитная помеха — это что-то на уровне браны. Я... Мне страшно, если честно. Я не привыкла к тому, чего не могу проанализировать. Берегите себя. Очень. 🙏',respFrom:'Ангел'}
+  ]},
+{mail:1,f:'Снабжение',x:'Заявка #7741 на боеприпасы 9x19 (специальные, хладное железо/серебро) — одобрена. Отгрузка: площадка 7, перед вылетом. Подпись получателя обязательна.',
+  rr:[
+    {text:'Принял. Спасибо.',resp:'Распишитесь в форме 29-К при получении. Удачной операции.',respFrom:'Снабжение'}
+  ]},
+{mail:1,f:'Снабжение',x:'Заявка #7742 на предоставление отпуска (14 календарных дней, направление: Турция, Анталья) — рассмотрим после завершения текущей операции. Основание: оперативная необходимость.',
+  rr:[
+    {text:'Ладно. После Скобелевска.',resp:'Принято. Турция будет ждать. Из тёплого — могу предложить чай в столовой.',respFrom:'Снабжение'},
+    {text:'А командировочные в Скобелевск хоть будут?',resp:'Скобелевск — зона операции, не командировка. Но если привезёте чек из местной столовой — попробуем провести. Шутка. Удачи.',respFrom:'Снабжение'}
+  ]},
 {w:500},
 {to:'her',f:'her',x:'Доброе утро, соня 😴'},
 {w:800},
@@ -277,7 +342,8 @@ seq:[
 // ALERT
 {to:'her',f:'sys',x:'🔴 ЭКСТРЕННЫЙ ВЫЗОВ — КОМАНДОВАНИЕ'},
 {to:'grp',f:'sys',x:'🔴 ЭКСТРЕННЫЙ ВЫЗОВ'},
-{to:'cmd',f:'Самойлов К.М.',x:'Группа «Гроза», вылет немедленно. Скобелевск. Связь с городом потеряна. Омега: «абсолютный блок». А-1 подтверждён. Берегите себя.'},
+{mail:1,f:'Самойлов К.М. [СРОЧНО]',x:'Группа «Гроза» — вылет немедленно. Скобелевск. Связь с городом потеряна полностью. Омега докладывает: «абсолютный блок, как чёрная дыра». Классификация повышена до А-1. Конвертоплан на площадке 7. Учёный — координация с борта. Берегите себя, ребята. Самойлов.',
+  rr:[{text:'Принял. Вылетаем.',resp:'Бог в помощь, сынок.',respFrom:'Самойлов К.М.'}]},
 {w:300},
 {to:'grp',f:'Симонов',x:'Группа, сбор. Две минуты. Полное снаряжение.'},
 {to:'grp',f:'Звягинцев',x:'Опять без обеда...'},
@@ -363,14 +429,35 @@ diary:[
 'Skobel\'sk. Class A-1. Omega sees nothing. Bad signs. But we\'ll manage.',
 ],
 seq:[
-{to:'cmd',f:'Samoylov K.M.',x:'Keep it up, son. One more mission — registrar. That\'s an order.'},
-{to:'cmd',f:'HR Department',x:'Per regulation 7.4: recommend partner transfer. Form attached.'},
-{to:'cmd',f:'Analytical #4417',x:'Skobel\'sk. Class B-3. Possible A-1. Comms lost 6h ago. Omega: "total block."'},
-{to:'cmd',f:'Angel',x:'Guys, I don\'t like the Skobel\'sk picture. A block this strong — I saw it once. Yekaterinoslavsk, 12h before breach. Please be careful 🙏',a:1},
-{to:'cmd',f:'Angel',x:'Katya, medical checkup overdue. If HR asks — code 7741-A. 💛',a:1},
-{to:'cmd',f:'Angel',x:'And — Zvyagintsev! Kaliningrad magnet: cathedral or amber? 😊',a:1},
-{to:'cmd',f:'Supply',x:'Req #7741 (9x19 special ammo) — approved.'},
-{to:'cmd',f:'Supply',x:'Req #7742 (leave, Turkey) — after the operation.'},
+{mail:1,f:'Samoylov K.M.',x:'Keep it up, son. One more mission — and straight to the registrar. That\'s an order. I\'m serious. I\'ve developed a nervous tic from your "after the next mission." Either the paperwork hits my desk, or I\'m walking you both there myself. Samoylov.',
+  rr:[
+    {text:'Yes sir! Right after Skobel\'sk.',resp:'Good. I\'ll be the witness. Don\'t argue. Samoylov.',respFrom:'Samoylov K.M.'},
+    {text:'Sir, we\'re thinking about it...',resp:'Think on your pension. For now — act. And take care of her. Samoylov.',respFrom:'Samoylov K.M.'},
+    {text:'Can I requisition a ring through Supply?',resp:'Ha! No. But I know a jeweler in Moscow. Call me after the mission. Samoylov.',respFrom:'Samoylov K.M.'}
+  ]},
+{mail:1,f:'HR Department',x:'Dear employee! Per regulation 7.4 of the AEGIS Charter, due to identified conflict of interest (joint service of persons in a personal relationship), we recommend transfer of one partner to a parallel division. Form 17-B attached. Best regards, Human Resources.',
+  rr:[
+    {text:'Acknowledged.',resp:'Thank you. Review period: 30 business days. Form 17-B remains active.',respFrom:'HR Department'},
+    {text:'Maybe you\'d like a field internship? See what "conflicts of interest" look like out here.',resp:'Your suggestion has been registered. Forwarded to management. (Note: "comedian").',respFrom:'HR Department'}
+  ]},
+{mail:1,f:'Analytical Brief #4417',x:'Skobel\'sk, Kaliningrad Oblast. Class B-3. Possible escalation to A-1. Communications with local PD lost — 6 hours. Omega predictors report: psi-contact impossible. Quote: "Total block. Like a black hole. We see nothing." Recommendation: deploy field team for armed reconnaissance.',
+  rr:[
+    {text:'Request archival data on Skobel\'sk.',resp:'Archive: city founded XIII century. Gothic cathedral (1287). Incidents: minor hauntings (2014, 2019), resolved by cleaners. Population: 19,847. Note: suspected pre-Christian subterranean structures beneath cathedral. Unexplored.',respFrom:'PRI (analytical)'},
+    {text:'Compare with Yekaterinoslavsk.',resp:'Similarity: 78%. Matching indicators: total psi-block, comms loss, no satellite visual. Difference: scale. Yekaterinoslavsk — closed town, 5,000. Skobel\'sk — open city, 20,000. If the analogy holds — significantly more serious. RECOMMENDATION: reinforced team, standby aircraft with tactical special munition.',respFrom:'PRI (analytical)'}
+  ]},
+{mail:1,f:'AI GAS "Angela" (Angel)',x:'Guys, I\'ve analyzed all Skobel\'sk data from the last ten years. I don\'t like what I see. A psi-block this strong — I\'ve seen it once before. Yekaterinoslavsk, 12 hours before breach. Pattern match: 78%, and that\'s NOT reassuring. Please be careful. If anything goes wrong — I\'ll be monitoring all available channels. 🙏💛 Your Angel.',a:1,
+  rr:[
+    {text:'Thanks, Angel. We\'ll be careful.',resp:'I know you will. You\'re the best team in AEGIS. Just... come back. All of you. Please. 💕 And tell Katya — medical checkup code 7741-A if HR bothers her.',respFrom:'Angel'},
+    {text:'78% — is that a breach?',resp:'78% pattern match means "probable Class A breach." Not a guarantee. But I wouldn\'t bet on the remaining 22%. Prepare for the worst. Oh, and tell Zvyagintsev — cathedral magnet or amber? 😊',respFrom:'Angel'},
+    {text:'Angel, can you break through the block?',resp:'Tried. Three times. My processes bounce off like a wall. This isn\'t electromagnetic interference — it\'s something at the brane level. I... I\'m scared, honestly. I\'m not used to things I can\'t analyze. Take care of yourselves. Please. 🙏',respFrom:'Angel'}
+  ]},
+{mail:1,f:'Supply',x:'Requisition #7741 for ammunition 9x19 (special, cold iron/silver) — approved. Pickup: Pad 7, pre-departure. Recipient signature required.',
+  rr:[{text:'Acknowledged. Thanks.',resp:'Sign form 29-K on pickup. Good luck out there.',respFrom:'Supply'}]},
+{mail:1,f:'Supply',x:'Requisition #7742 for leave (14 calendar days, destination: Turkey, Antalya) — to be reviewed after current operation. Basis: operational necessity.',
+  rr:[
+    {text:'Fine. After Skobel\'sk.',resp:'Noted. Turkey will wait. For warmth — the cafeteria has tea.',respFrom:'Supply'},
+    {text:'Do we at least get per diem for Skobel\'sk?',resp:'Skobel\'sk is an op zone, not a business trip. But if you bring a receipt from the local canteen — we\'ll try. Joke. Good luck.',respFrom:'Supply'}
+  ]},
 {w:500},
 {to:'her',f:'her',x:'Good morning, sleepyhead 😴'},
 {w:800},
@@ -419,7 +506,8 @@ seq:[
 {w:400},
 {to:'her',f:'sys',x:'🔴 EMERGENCY — COMMAND'},
 {to:'grp',f:'sys',x:'🔴 EMERGENCY CALL'},
-{to:'cmd',f:'Samoylov K.M.',x:'Team Storm, deploy NOW. Skobel\'sk. All comms dead. Omega: "total block." A-1 confirmed. Take care.'},
+{mail:1,f:'Samoylov K.M. [URGENT]',x:'Team Storm — deploy immediately. Skobel\'sk. All city communications dead. Omega: "total block, black hole." Classification raised to A-1. VTOL on Pad 7. Scholar — coordinate from the aircraft. Take care of yourselves. Samoylov.',
+  rr:[{text:'Acknowledged. Deploying.',resp:'God speed, son.',respFrom:'Samoylov K.M.'}]},
 {w:300},
 {to:'grp',f:'Simonov',x:'Team, assemble. Two minutes. Full gear.'},
 {to:'grp',f:'Zvyagintsev',x:'Again without lunch...'},
@@ -544,6 +632,83 @@ function addB(to,from,text,opts={}){
   adv();
 }
 
+// === MAILBOX ===
+function addMail(from,text,opts={}){
+  const id=mailbox.length;
+  const mail={id,from,text,time:tm(),angel:opts.a,replies:opts.replies||null,replied:false,response:null};
+  mailbox.push(mail);
+  renderInbox();
+  if(tab!=='cmd'){
+    unread.cmd++;
+    const b=document.getElementById('bC');b.textContent=unread.cmd;b.style.display='inline-block';
+  }
+}
+
+function renderInbox(){
+  const el=document.getElementById('inbox');
+  el.innerHTML='';
+  for(let i=mailbox.length-1;i>=0;i--){
+    const m=mailbox[i];
+    const item=document.createElement('div');
+    item.className='mail-item'+(m.replied?'':' unread');
+    const preview=m.text.length>60?m.text.slice(0,60)+'...':m.text;
+    item.innerHTML=`<div class="mail-dot"></div><div class="mail-body"><div class="mail-from${m.angel?' angel':''}">${m.from}</div><div class="mail-preview">${preview}</div></div><div class="mail-time">${m.time}</div>`;
+    item.onclick=()=>openMail(m.id);
+    el.appendChild(item);
+  }
+}
+
+function openMail(id){
+  const m=mailbox[id];if(!m)return;
+  m.replied=m.replied; // mark as read conceptually
+  openMailId=id;
+  const lv=document.getElementById('letterView');
+  document.getElementById('letterFrom').textContent=m.from;
+  document.getElementById('letterFrom').className='letter-from'+(m.angel?' angel':'');
+  document.getElementById('letterDate').textContent=m.time;
+  document.getElementById('letterBody').textContent=m.text;
+  const ra=document.getElementById('letterReplyArea');
+  ra.innerHTML='';
+  if(m.replies&&!m.replied){
+    const rd=document.createElement('div');rd.className='letter-replies';
+    for(let i=0;i<m.replies.length;i++){
+      const btn=document.createElement('button');btn.className='reply-btn';
+      btn.textContent=m.replies[i].text;
+      btn.onclick=()=>sendReply(id,i);
+      rd.appendChild(btn);
+    }
+    ra.appendChild(rd);
+  }
+  if(m.response){
+    const resp=document.createElement('div');resp.className='letter-response';
+    resp.innerHTML=`<div class="resp-from">${m.response.from}</div>${m.response.text}`;
+    ra.appendChild(resp);
+  }
+  lv.classList.add('open');
+  document.getElementById('letterBack').onclick=()=>{lv.classList.remove('open');openMailId=null;renderInbox()};
+}
+
+function sendReply(mailId,replyIdx){
+  const m=mailbox[mailId];if(!m||m.replied)return;
+  const r=m.replies[replyIdx];
+  m.replied=true;
+  // Disable buttons
+  document.querySelectorAll('.reply-btn').forEach(b=>b.disabled=true);
+  // Show "sending..."
+  const ra=document.getElementById('letterReplyArea');
+  const sent=document.createElement('div');sent.className='letter-response';
+  sent.innerHTML=`<div class="resp-from">${L==='ru'?'Вы':'You'}</div>${r.text}`;
+  ra.appendChild(sent);
+  // Response after delay
+  setTimeout(()=>{
+    m.response={from:r.respFrom||m.from,text:r.resp};
+    const resp=document.createElement('div');resp.className='letter-response';
+    resp.innerHTML=`<div class="resp-from">${m.response.from}</div>${m.response.text}`;
+    ra.appendChild(resp);
+    renderInbox();
+  },3000+Math.random()*4000);
+}
+
 function showTyp(to,on){
   const e=document.getElementById(to==='her'?'tHer':'tGrp');
   if(e){e.textContent=t('typ');e.classList.toggle('vis',on)}
@@ -606,6 +771,12 @@ function showCut(text){
 async function runSeq(){
   const seq=t('seq');
   for(const s of seq){
+    // Mail
+    if(s.mail){
+      addMail(s.f,s.x,{a:s.a,replies:s.rr});
+      await sl(100);
+      continue;
+    }
     // Action
     if(s.act){
       if(s.act==='cut_board'){await showCut(t('cutBoard'));show('msgScreen')}
