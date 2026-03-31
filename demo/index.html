@@ -650,63 +650,91 @@ function renderInbox(){
   for(let i=mailbox.length-1;i>=0;i--){
     const m=mailbox[i];
     const item=document.createElement('div');
-    item.className='mail-item'+(m.replied?'':' unread');
-    const preview=m.text.length>60?m.text.slice(0,60)+'...':m.text;
-    item.innerHTML=`<div class="mail-dot"></div><div class="mail-body"><div class="mail-from${m.angel?' angel':''}">${m.from}</div><div class="mail-preview">${preview}</div></div><div class="mail-time">${m.time}</div>`;
-    item.onclick=()=>openMail(m.id);
+    const isNew=!m.read;
+    item.className='mail-item'+(isNew?' unread':'');
+    const preview=m.text.length>55?m.text.slice(0,55)+'...':m.text;
+    const statusIcon=m.response?'&#10003; ':'';
+    item.innerHTML=`<div class="mail-dot"></div><div class="mail-body"><div class="mail-from${m.angel?' angel':''}">${statusIcon}${m.from}</div><div class="mail-preview">${preview}</div></div><div class="mail-time">${m.time}</div>`;
+    const mid=m.id;
+    item.onclick=()=>{mailbox[mid].read=true;openMail(mid)};
     el.appendChild(item);
   }
 }
 
 function openMail(id){
   const m=mailbox[id];if(!m)return;
-  m.replied=m.replied; // mark as read conceptually
   openMailId=id;
   const lv=document.getElementById('letterView');
-  document.getElementById('letterFrom').textContent=m.from;
-  document.getElementById('letterFrom').className='letter-from'+(m.angel?' angel':'');
+  const fromEl=document.getElementById('letterFrom');
+  fromEl.textContent=m.from;
+  fromEl.className='letter-from'+(m.angel?' angel':'');
   document.getElementById('letterDate').textContent=m.time;
-  document.getElementById('letterBody').textContent=m.text;
+  // Use innerHTML for proper text wrapping
+  const bodyEl=document.getElementById('letterBody');
+  bodyEl.innerHTML='<p style="white-space:pre-wrap;margin:0">'+m.text.replace(/</g,'&lt;')+'</p>';
+  // Rebuild reply area from scratch
   const ra=document.getElementById('letterReplyArea');
   ra.innerHTML='';
-  if(m.replies&&!m.replied){
-    const rd=document.createElement('div');rd.className='letter-replies';
-    for(let i=0;i<m.replies.length;i++){
-      const btn=document.createElement('button');btn.className='reply-btn';
-      btn.textContent=m.replies[i].text;
-      btn.onclick=()=>sendReply(id,i);
-      rd.appendChild(btn);
-    }
-    ra.appendChild(rd);
+  // Show player's reply if already replied
+  if(m.replied&&m.playerReply){
+    const pr=document.createElement('div');pr.className='letter-response';
+    pr.innerHTML=`<div class="resp-from">${L==='ru'?'Вы':'You'}</div>${m.playerReply}`;
+    ra.appendChild(pr);
   }
+  // Show response if exists
   if(m.response){
     const resp=document.createElement('div');resp.className='letter-response';
     resp.innerHTML=`<div class="resp-from">${m.response.from}</div>${m.response.text}`;
     ra.appendChild(resp);
   }
+  // Show reply buttons only if not yet replied
+  if(m.replies&&!m.replied){
+    const rd=document.createElement('div');rd.className='letter-replies';
+    for(let i=0;i<m.replies.length;i++){
+      const btn=document.createElement('button');btn.className='reply-btn';
+      btn.textContent=m.replies[i].text;
+      const idx=i;const mid=id;
+      btn.onclick=()=>sendReply(mid,idx);
+      rd.appendChild(btn);
+    }
+    ra.appendChild(rd);
+  }
   lv.classList.add('open');
-  document.getElementById('letterBack').onclick=()=>{lv.classList.remove('open');openMailId=null;renderInbox()};
+  document.getElementById('letterBack').onclick=()=>{
+    lv.classList.remove('open');
+    openMailId=null;
+    renderInbox();
+  };
 }
 
 function sendReply(mailId,replyIdx){
-  const m=mailbox[mailId];if(!m||m.replied)return;
+  const m=mailbox[mailId];
+  if(!m||m.replied)return;
+  if(!m.replies||!m.replies[replyIdx])return;
   const r=m.replies[replyIdx];
   m.replied=true;
-  // Disable buttons
-  document.querySelectorAll('.reply-btn').forEach(b=>b.disabled=true);
-  // Show "sending..."
+  m.playerReply=r.text;
+  // Rebuild reply area: disable buttons, show player reply
   const ra=document.getElementById('letterReplyArea');
-  const sent=document.createElement('div');sent.className='letter-response';
-  sent.innerHTML=`<div class="resp-from">${L==='ru'?'Вы':'You'}</div>${r.text}`;
-  ra.appendChild(sent);
+  ra.innerHTML='';
+  const pr=document.createElement('div');pr.className='letter-response';
+  pr.innerHTML=`<div class="resp-from">${L==='ru'?'Вы':'You'}</div>${r.text}`;
+  ra.appendChild(pr);
+  // Typing indicator
+  const typing=document.createElement('div');
+  typing.style.cssText='font-size:12px;color:#8896a4;font-style:italic;padding:8px 0';
+  typing.textContent=L==='ru'?'Ответ...':'Replying...';
+  ra.appendChild(typing);
   // Response after delay
+  const delay=3000+Math.random()*4000;
   setTimeout(()=>{
+    typing.remove();
     m.response={from:r.respFrom||m.from,text:r.resp};
     const resp=document.createElement('div');resp.className='letter-response';
     resp.innerHTML=`<div class="resp-from">${m.response.from}</div>${m.response.text}`;
     ra.appendChild(resp);
     renderInbox();
-  },3000+Math.random()*4000);
+  },delay);
 }
 
 function showTyp(to,on){
@@ -774,7 +802,7 @@ async function runSeq(){
     // Mail
     if(s.mail){
       addMail(s.f,s.x,{a:s.a,replies:s.rr});
-      await sl(100);
+      await sl(400+Math.random()*600);
       continue;
     }
     // Action
