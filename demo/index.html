@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AEGIS:Inferno — Chapter 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Share+Tech+Mono&family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   AEGIS:INFERNO — CHAPTER 1 DEMO
+   Bilingual (RU/EN). Mobile-first. Single file.
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Lore / Intro screens */
+  --lore-bg: #0a0a0f;
+  --lore-text: #c8c8d0;
+  --lore-accent: #daa520;
+  --lore-dim: #555566;
+
+  /* Peaceful mode */
+  --p-bg: #f0f4f8;
+  --p-white: #ffffff;
+  --p-bubble-mine: #d4e8ff;
+  --p-bubble-her: #ffffff;
+  --p-border: #e2e8f0;
+  --p-text: #1a2a3a;
+  --p-text-dim: #8896a4;
+  --p-accent: #3b82f6;
+  --p-online: #22c55e;
+  --p-her: #ec4899;
+  --p-group: #8b5cf6;
+  --p-cmd: #64748b;
+  --p-angel: #daa520;
+
+  /* Combat mode */
+  --c-bg: #050a05;
+  --c-panel: #0a120a;
+  --c-border: #1a3a1a;
+  --c-text: #c8e6c9;
+  --c-green: #00ff41;
+  --c-red: #ff1744;
+  --c-amber: #ffa000;
+  --c-gold: #daa520;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #000;
+  color: #fff;
+}
+
+/* === DEVICE CONTAINER === */
+.device {
+  width: 100%;
+  max-width: 460px;
+  height: 100vh;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* === LANGUAGE SELECT (first screen) === */
+#langScreen {
+  position: absolute;
+  inset: 0;
+  background: var(--lore-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  z-index: 200;
+}
+#langScreen h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 28px;
+  letter-spacing: 4px;
+  color: var(--lore-accent);
+}
+#langScreen p {
+  color: var(--lore-dim);
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.lang-buttons {
+  display: flex;
+  gap: 16px;
+}
+.lang-btn {
+  padding: 16px 40px;
+  background: transparent;
+  border: 1px solid var(--lore-accent);
+  color: var(--lore-accent);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 14px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.lang-btn:hover {
+  background: rgba(218,165,32,0.1);
+  box-shadow: 0 0 20px rgba(218,165,32,0.2);
+}
+
+/* === LORE CRAWL SCREEN === */
+#loreScreen {
+  position: absolute;
+  inset: 0;
+  background: var(--lore-bg);
+  display: none;
+  flex-direction: column;
+  z-index: 190;
+  overflow: hidden;
+}
+
+.lore-container {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  padding: 0 32px;
+}
+
+.lore-content {
+  position: absolute;
+  bottom: -100%;
+  width: calc(100% - 64px);
+  animation: loreCrawl 60s linear forwards;
+  animation-play-state: paused;
+}
+
+@keyframes loreCrawl {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-100%); }
+}
+
+.lore-content h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 16px;
+  color: var(--lore-accent);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin: 40px 0 16px;
+  text-align: center;
+}
+
+.lore-content p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--lore-text);
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.lore-content .year {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 32px;
+  color: var(--lore-accent);
+  text-align: center;
+  margin: 60px 0 20px;
+  letter-spacing: 4px;
+}
+
+/* Image/video placeholder in lore */
+.media-slot {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: #111;
+  border: 1px solid #222;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 24px 0;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+.media-slot img, .media-slot video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.media-slot .placeholder {
+  color: #333;
+  font-size: 12px;
+  font-family: 'Share Tech Mono', monospace;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.lore-skip {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  padding: 8px 20px;
+  background: rgba(218,165,32,0.1);
+  border: 1px solid var(--lore-accent);
+  color: var(--lore-accent);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  z-index: 5;
+  transition: all 0.3s;
+}
+.lore-skip:hover { background: rgba(218,165,32,0.2); }
+
+.lore-fade-top, .lore-fade-bottom {
+  position: absolute;
+  left: 0; right: 0;
+  height: 80px;
+  pointer-events: none;
+  z-index: 2;
+}
+.lore-fade-top { top: 0; background: linear-gradient(var(--lore-bg), transparent); }
+.lore-fade-bottom { bottom: 0; background: linear-gradient(transparent, var(--lore-bg)); }
+
+/* === DIARY SCREEN === */
+#diaryScreen {
+  position: absolute;
+  inset: 0;
+  background: var(--lore-bg);
+  display: none;
+  flex-direction: column;
+  z-index: 180;
+  overflow: hidden;
+}
+
+.diary-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 40px 28px 100px;
+  scroll-behavior: smooth;
+}
+
+.diary-container::-webkit-scrollbar { width: 2px; }
+.diary-container::-webkit-scrollbar-thumb { background: #333; }
+
+.diary-date {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  color: var(--lore-dim);
+  letter-spacing: 2px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.diary-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--lore-text);
+  margin-bottom: 16px;
+}
+
+.diary-text em { color: var(--lore-accent); }
+
+.diary-continue {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 32px;
+  background: rgba(218,165,32,0.1);
+  border: 1px solid var(--lore-accent);
+  color: var(--lore-accent);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  z-index: 5;
+}
+
+/* === MESSENGER (peaceful mode) === */
+#messengerScreen {
+  position: absolute;
+  inset: 0;
+  background: var(--p-bg);
+  display: none;
+  flex-direction: column;
+  z-index: 170;
+  color: var(--p-text);
+}
+
+.msg-topbar {
+  padding: 12px 16px 8px;
+  background: var(--p-white);
+  border-bottom: 1px solid var(--p-border);
+  flex-shrink: 0;
+}
+
+.msg-topbar-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.app-name {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--p-accent);
+}
+.app-name small {
+  color: var(--p-text-dim);
+  font-weight: 400;
+  font-size: 11px;
+  margin-left: 6px;
+}
+
+.msg-tabs {
+  display: flex;
+}
+
+.msg-tab {
+  flex: 1;
+  padding: 8px 4px 10px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--p-text-dim);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  position: relative;
+}
+.msg-tab:hover { color: var(--p-text); }
+.msg-tab.active { border-bottom-color: var(--p-accent); color: var(--p-accent); }
+.msg-tab[data-tab="her"].active { color: var(--p-her); border-bottom-color: var(--p-her); }
+.msg-tab[data-tab="group"].active { color: var(--p-group); border-bottom-color: var(--p-group); }
+.msg-tab[data-tab="cmd"].active { color: var(--p-cmd); border-bottom-color: var(--p-cmd); }
+
+.msg-tab .badge {
+  position: absolute;
+  top: 2px;
+  right: calc(50% - 28px);
+  background: var(--p-her);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 8px;
+  display: none;
+}
+.msg-tab[data-tab="group"] .badge { background: var(--p-group); }
+.msg-tab[data-tab="cmd"] .badge { background: var(--p-cmd); }
+
+/* Chat views */
+.chat-view {
+  flex: 1;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+.chat-view.active { display: flex; }
+
+.chat-header {
+  padding: 10px 16px;
+  background: var(--p-white);
+  border-bottom: 1px solid var(--p-border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+.avatar.her { background: linear-gradient(135deg, #ec4899, #f472b6); }
+.avatar.group { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
+.avatar.cmd { background: linear-gradient(135deg, #64748b, #94a3b8); }
+.avatar.angel { background: linear-gradient(135deg, #daa520, #f0d060); }
+
+.chat-name { font-size: 14px; font-weight: 600; }
+.chat-status { font-size: 11px; color: var(--p-online); }
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.messages::-webkit-scrollbar { width: 3px; }
+.messages::-webkit-scrollbar-thumb { background: var(--p-border); }
+
+.bubble-row { display: flex; flex-direction: column; animation: bubbleIn 0.3s ease-out; }
+.bubble-row.mine { align-items: flex-end; }
+.bubble-row.theirs { align-items: flex-start; }
+
+@keyframes bubbleIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.bubble {
+  max-width: 80%;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+.bubble-row.mine .bubble {
+  background: var(--p-bubble-mine);
+  border-bottom-right-radius: 4px;
+}
+.bubble-row.theirs .bubble {
+  background: var(--p-white);
+  border: 1px solid var(--p-border);
+  border-bottom-left-radius: 4px;
+}
+.bubble-row.system .bubble {
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  font-size: 12px;
+  color: #666;
+  align-self: center;
+  text-align: center;
+  border-radius: 8px;
+}
+.bubble-row.angel .bubble {
+  background: linear-gradient(135deg, #fff8e1, #fff3cd);
+  border: 1px solid var(--p-angel);
+  border-left: 3px solid var(--p-angel);
+  border-bottom-left-radius: 4px;
+}
+
+.bubble .sender {
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 2px;
+  display: block;
+}
+.bubble .sender.her-name { color: var(--p-her); }
+.bubble .sender.group-name { color: var(--p-group); }
+.bubble .sender.angel-name { color: var(--p-angel); }
+
+.bubble .time {
+  font-size: 10px;
+  color: var(--p-text-dim);
+  text-align: right;
+  margin-top: 4px;
+}
+
+/* Typing indicator */
+.typing-indicator {
+  display: none;
+  padding: 8px 16px;
+  font-size: 12px;
+  color: var(--p-text-dim);
+  font-style: italic;
+}
+.typing-indicator.visible { display: block; }
+
+/* Choice buttons */
+.choice-panel {
+  padding: 12px 16px;
+  background: var(--p-white);
+  border-top: 1px solid var(--p-border);
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.choice-panel.visible { display: flex; }
+
+.choice-btn {
+  padding: 10px 14px;
+  background: var(--p-bubble-mine);
+  border: 1px solid var(--p-accent);
+  border-radius: 10px;
+  color: var(--p-text);
+  font-size: 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.choice-btn:hover {
+  background: #c0daff;
+  border-color: #2563eb;
+}
+
+/* === CUTSCENE (video/image fullscreen) === */
+#cutsceneScreen {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 195;
+}
+#cutsceneScreen img, #cutsceneScreen video {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+#cutsceneScreen .placeholder {
+  color: #333;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-align: center;
+  padding: 20px;
+}
+.cutscene-skip {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid #444;
+  color: #888;
+  font-size: 11px;
+  cursor: pointer;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+/* === TRANSITION TO COMBAT (flash + transform) === */
+.flash-overlay {
+  position: absolute;
+  inset: 0;
+  background: #ff1744;
+  z-index: 300;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+.flash-overlay.active { opacity: 1; }
+
+/* === CHAPTER TITLE === */
+#chapterScreen {
+  position: absolute;
+  inset: 0;
+  background: var(--c-bg);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 160;
+  gap: 16px;
+}
+#chapterScreen h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 24px;
+  letter-spacing: 4px;
+  color: var(--c-green);
+}
+#chapterScreen h2 {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 14px;
+  color: var(--c-text);
+  letter-spacing: 2px;
+}
+#chapterScreen p {
+  color: #555;
+  font-size: 12px;
+  margin-top: 40px;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+/* === GLOBAL HELPERS === */
+.hidden { display: none !important; }
+.fade-in { animation: fadeIn 0.5s ease-out; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+</style>
+</head>
+<body>
+
+<div class="device" id="device">
+
+  <!-- FLASH OVERLAY -->
+  <div class="flash-overlay" id="flashOverlay"></div>
+
+  <!-- SCREEN: LANGUAGE SELECT -->
+  <div id="langScreen">
+    <h1>AEGIS</h1>
+    <p>Inferno</p>
+    <div class="lang-buttons">
+      <button class="lang-btn" onclick="startGame('ru')">РУССКИЙ</button>
+      <button class="lang-btn" onclick="startGame('en')">ENGLISH</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: LORE CRAWL -->
+  <div id="loreScreen">
+    <div class="lore-fade-top"></div>
+    <div class="lore-container">
+      <div class="lore-content" id="loreContent"></div>
+    </div>
+    <div class="lore-fade-bottom"></div>
+    <button class="lore-skip" id="loreSkip"></button>
+  </div>
+
+  <!-- SCREEN: DIARY -->
+  <div id="diaryScreen">
+    <div class="diary-container" id="diaryContainer"></div>
+    <button class="diary-continue" id="diaryContinue"></button>
+  </div>
+
+  <!-- SCREEN: CUTSCENE -->
+  <div id="cutsceneScreen">
+    <div class="placeholder" id="cutscenePlaceholder"></div>
+    <button class="cutscene-skip" id="cutsceneSkip"></button>
+  </div>
+
+  <!-- SCREEN: MESSENGER -->
+  <div id="messengerScreen">
+    <div class="msg-topbar">
+      <div class="msg-topbar-row">
+        <span class="app-name" id="appName"></span>
+      </div>
+      <div class="msg-tabs" id="msgTabs">
+        <div class="msg-tab active" data-tab="her" onclick="switchTab('her')">
+          <span id="tabHerLabel"></span>
+          <span class="badge" id="badgeHer">0</span>
+        </div>
+        <div class="msg-tab" data-tab="group" onclick="switchTab('group')">
+          <span id="tabGroupLabel"></span>
+          <span class="badge" id="badgeGroup">0</span>
+        </div>
+        <div class="msg-tab" data-tab="cmd" onclick="switchTab('cmd')">
+          <span id="tabCmdLabel"></span>
+          <span class="badge" id="badgeCmd">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- HER -->
+    <div class="chat-view active" id="chatHer">
+      <div class="chat-header">
+        <div class="avatar her" id="herAvatar"></div>
+        <div>
+          <div class="chat-name" id="herName"></div>
+          <div class="chat-status" id="herStatus"></div>
+        </div>
+      </div>
+      <div class="messages" id="messagesHer"></div>
+      <div class="typing-indicator" id="typingHer"></div>
+    </div>
+
+    <!-- GROUP -->
+    <div class="chat-view" id="chatGroup">
+      <div class="chat-header">
+        <div class="avatar group">G</div>
+        <div>
+          <div class="chat-name" id="groupName"></div>
+          <div class="chat-status" id="groupStatus"></div>
+        </div>
+      </div>
+      <div class="messages" id="messagesGroup"></div>
+      <div class="typing-indicator" id="typingGroup"></div>
+    </div>
+
+    <!-- COMMAND -->
+    <div class="chat-view" id="chatCmd">
+      <div class="chat-header">
+        <div class="avatar cmd">C</div>
+        <div>
+          <div class="chat-name" id="cmdName"></div>
+        </div>
+      </div>
+      <div class="messages" id="messagesCmd"></div>
+    </div>
+
+    <!-- CHOICE PANEL -->
+    <div class="choice-panel" id="choicePanel"></div>
+  </div>
+
+  <!-- SCREEN: CHAPTER TITLE -->
+  <div id="chapterScreen">
+    <h1 id="chapterTitle"></h1>
+    <h2 id="chapterSubtitle"></h2>
+    <p id="chapterFooter"></p>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// AEGIS:INFERNO — CHAPTER 1 ENGINE
+// ============================================================
+
+let LANG = 'ru';
+let currentScreen = 'lang';
+let messageQueue = [];
+let isProcessing = false;
+let gameTime = { h: 8, m: 15 };
+let activeTab = 'her';
+let unread = { her: 0, group: 0, cmd: 0 };
+
+// ==================== TEXTS ====================
+const T = {
+  ru: {
+    appName: 'КорпСвязь',
+    appSub: 'общий режим',
+    tabHer: 'Она',
+    tabGroup: 'Группа',
+    tabCmd: 'Командование',
+    herName: 'Катя Громова',
+    herStatus: 'в сети',
+    herAvatar: 'К',
+    groupName: 'Группа «Гроза»',
+    groupStatus: '4 участника',
+    cmdName: 'Командование',
+    typing: 'печатает...',
+    skip: 'ПРОПУСТИТЬ ►',
+    continue_: 'ПРОДОЛЖИТЬ ►',
+    ch2title: 'ГЛАВА 2',
+    ch2sub: 'ИНФЕРНО',
+    ch2foot: 'Демо-версия окончена. Полная игра — скоро.',
+    cutsceneBoarding: '[ВИДЕО] Группа грузится в Як-244. Рампа закрывается. Двигатели набирают мощность.',
+    cutsceneFlight: '[ВИДЕО] Вид из кабины. Облака. Скорость 1.4М. Приборы светятся зелёным.',
+    cutsceneCity: '[ВИДЕО] Город внизу. Купол белого тумана. Красивый. Страшный.',
+    cutsceneImpact: '[ВИДЕО] Зона расширяется. Здание разлетается. Арматура летит в камеру. УДАР. Чёрный экран.',
+
+    lore: [
+      { type: 'year', text: '202X' },
+      { type: 'heading', text: 'Новая Российская Империя' },
+      { type: 'text', text: '27 лет назад группа офицеров совершила то, что историки назовут «Весенним переворотом». Полковник Ярослав Вяземский — молодой, дерзкий, убеждённый — свергнул агонизирующую власть Ельцина и провозгласил себя Императором.' },
+      { type: 'media', id: 'lore_moscow' },
+      { type: 'text', text: 'За четверть века Империя преобразила страну. Уровень жизни — выше среднеамериканского. Олигархов нет. Свобода слова — есть, с одной оговоркой: за ложь в СМИ — тюрьма. Говори что хочешь. Но — обоснуй.' },
+      { type: 'text', text: 'В 2020 году на арктическом побережье зажглось новое солнце. Десять датацентров, десять атомных станций — и первый в истории человечества разумный ИИ. Её назвали Анжела. В народе — «Ангел». Наперсница Императора, член Высшего Совета, мозг Империи.' },
+      { type: 'heading', text: 'Паранормальное' },
+      { type: 'text', text: 'Но у Империи есть секрет.' },
+      { type: 'text', text: 'С 1939 года — когда НКВД зафиксировало 230 случаев, которые не поддавались объяснению — государство знает: мир не таков, каким кажется. Призраки. Демоны. Фейри. Ожившие статуи. Одержимые дома. Зоны, где пространство перестаёт подчиняться физике.' },
+      { type: 'text', text: 'Для борьбы с этим создан ОРПП — Отдел Расследования Паранормальных Происшествий при Службе Имперской Безопасности. О нём знают единицы. Его агенты — лучшие из лучших. Их работа — защищать двадцать тысяч обычных дней от одного, который может стать последним.' },
+      { type: 'media', id: 'lore_hq' },
+      { type: 'heading', text: 'Скобелевск' },
+      { type: 'text', text: 'Маленький город в Калининградской области. Двадцать тысяч жителей. Готический собор в центре — одно из чудес Европы. Православная церковь-крепость на окраине. Тихое место. Красивое.' },
+      { type: 'media', id: 'lore_city' },
+      { type: 'text', text: 'Шесть часов назад связь со Скобелевском была потеряна.' },
+      { type: 'text', text: 'Псионики Омеги докладывают: «Глухая стена. Не видим ничего. Как чёрная дыра.»' },
+      { type: 'text', text: 'Группа «Гроза» получила приказ на вылет.' },
+    ],
+
+    diary: [
+      'Сегодня утро как утро. Кофе, пробки на Кутузовском, Катюшин круассан в верхнем шкафчике.',
+      'Мы с ней уже год. Год, а я всё не могу привыкнуть — просыпаешься, а она рядом. Спит, сопит в подушку, волосы во все стороны. И ты лежишь и думаешь: как я вообще жил без этого.',
+      'Давно пора подавать заявление в ЗАГС. Самойлов уже два раза намекал — прямым текстом, в своей манере: «Ещё одно задание — и в загс, сынок. Это приказ.»',
+      'А я, дурак, всё откладываю. То миссия, то отчёт, то «давай после отпуска». Катя не давит. Она вообще не давит — никогда. Просто смотрит иногда... так. И я понимаю, что откладывать больше нельзя.',
+      'Ладно. Вот вернёмся из Скобелевска — и всё. Хватит тянуть.',
+      '',
+      'ОРПП — странное место для работы. И странное место для любви.',
+      'Мы расследуем паранормальные происшествия. Звучит как бред, правда? Призраки, демоны, фейри. Первый год я сам не верил — думал, секретный НИИ по изучению галлюцинаций. Потом увидел, как мраморная статуя плачет настоящими слезами. Потом — как человек проходит сквозь стену. Потом перестал считать.',
+      'Офис у нас — как офис. Столовая, кофемашина, Звягинцев с его магнитиками. HR шлёт уведомления про медосмотр. Анжела — Ангел — пишет в корпоративный мессенджер, чтобы мы не забывали обедать. Она за нас переживает. Искренне. Иногда присылает сердечки.',
+      'А потом звонит тревога — и через час ты стоишь перед дверью, за которой кто-то кричит голосом, которого у человека быть не может.',
+      '',
+      'Катя — полевой агент. Позывной «Гроза». Её так назвали не за характер — за скорость. Хотя характер тоже.',
+      'Мы познакомились на миссии год назад. Всё пошло наперекосяк, подкрепление опаздывало, и мы два часа держали периметр вдвоём — я с планшетом и пистолетом, она с автоматом и матом. Когда вертушка наконец прилетела — мы сидели спина к спине, у обоих тряслись руки, и она сказала: «Ну что, аналитик. Кофе?»',
+      'С тех пор — кофе. Каждое утро. Из одной кофеварки. В одной квартире.',
+      '',
+      'Скобелевск. Класс А-1. Потеря связи. Омега не видит ничего.',
+      'Плохие знаки. Очень плохие.',
+      'Но мы справимся. Мы всегда справляемся.',
+    ],
+
+    // Messages for the chat
+    herChat: [
+      { from: 'her', text: 'Доброе утро, соня 😴' },
+      { from: 'her', text: 'Я тебе круассан спрятала. Верхний шкафчик, за чаем.' },
+      { from: 'her', text: 'Не хрусти громко — Симонов обидится 😄' },
+      { type: 'choice', options: [
+        'Ты лучшая. Люблю.',
+        'А кофе?',
+        'Симонов переживёт.'
+      ]},
+      { from: 'her', delay: 3000, variants: [
+        'Я знаю 💕 Давай, не опаздывай.',
+        'В кружке с трещиной. Как всегда. Не благодари.',
+        'Он вчера мой йогурт сожрал. Ему вообще ничего не жалко.'
+      ]},
+      { from: 'her', text: 'Кстати, ты храпел сегодня 😤' },
+      { type: 'choice', options: [
+        'Я? Не храплю. Никогда.',
+        'Это был кот. За окном.',
+        'Зато ты сопишь. Мило.'
+      ]},
+      { from: 'her', delay: 4000, variants: [
+        'АХАХАХ ты серьёзно?? Стены тряслись!! 🤣',
+        'У нас нет кота. У нас ПЯТЫЙ ЭТАЖ. 🤦‍♀️',
+        'Я НЕ соплю!! ...ладно, может чуть-чуть. Но это мило, а ты — как бензопила.'
+      ]},
+      { from: 'her', text: 'Ладно, я побежала. Симонов зверствует — построение через десять минут.' },
+      { from: 'her', text: 'Кстати, слышала от Ангела — Скобелевск. Звучит серьёзно. Омега не может пробиться.' },
+      { type: 'choice', options: [
+        'Будь осторожна.',
+        'Разберёмся на месте.',
+        'Главное — вернись.'
+      ]},
+      // After alert
+      { from: 'system', text: '🔴 ЭКСТРЕННЫЙ ВЫЗОВ — КОМАНДОВАНИЕ' },
+      { from: 'her', text: 'Ну вот. А я круассан не доела.' },
+      { from: 'her', text: 'Ладно, съем когда вернусь. НЕ ТРОГАЙ.' },
+      { type: 'choice', options: [
+        'Удачи, Кать.',
+        'Я буду на связи. Всё время.',
+        'Люблю тебя.'
+      ]},
+      { from: 'her', delay: 2000, text: 'Вернусь. Не пей мой кофе. ☕' },
+    ],
+
+    groupChat: [
+      { from: 'Звягинцев', text: 'Да они опять кофе гоняют. А мы тут как лохи рапорты пишем' },
+      { from: 'Старкова', text: 'Блядь, не трави душу. Завидую!' },
+      { from: 'Симонов', text: 'Отставить личное в групповом.' },
+      { from: 'Симонов', text: '(...) Хотя если кто круассан не доест — я заберу.' },
+      { from: 'Катя', text: 'Командир, тебе не круассан нужен, а диета 😏' },
+      { from: 'Звягинцев', text: 'Кстати, я из Екатеринославска магнитик так и не привёз. Там не до магнитиков было...' },
+      { from: 'Старкова', text: 'Из Скобелевска привези. Там вроде с янтарём есть' },
+      { from: 'Звягинцев', text: 'Ангел обещала заказать! С Кафедральным собором 😍' },
+      // After alert
+      { from: 'system', text: '🔴 ЭКСТРЕННЫЙ ВЫЗОВ' },
+      { from: 'Симонов', text: 'Группа, сбор. Две минуты. Полное снаряжение.' },
+      { from: 'Звягинцев', text: 'Опять без обеда...' },
+      { from: 'Старкова', text: 'Магнитик привези 😉' },
+      { from: 'Звягинцев', text: 'Я серьёзно — мы так и не пожрали' },
+      { from: 'Катя', text: 'Построение! Бегом!' },
+    ],
+
+    cmdChat: [
+      { from: 'Самойлов К.М.', text: 'Так держать, сынок. Ещё одно задание — и в загс. Это приказ.' },
+      { from: 'HR-отдел', text: 'Уважаемый сотрудник! В связи с п. 7.4 Устава ОРПП рекомендуем рассмотреть перевод одного из партнёров в параллельное подразделение для исключения конфликта интересов. Бланк прилагается. С уважением, Отдел кадров.' },
+      { from: 'Аналитическая записка #4417', text: 'Скобелевск, Калининградская обл. Класс Б-3. Возможна эскалация до А-1. Потеря связи с местным ОП 6 часов назад. Группа предикторов Омега: пси-контакт невозможен («глухая стена»). Рекомендовано: направление оперативной группы.' },
+      { from: 'ИИ ГАС «Анжела» (Ангел)', text: 'Ребята, я посмотрела аналитику по Скобелевску. Мне не нравится картинка. Пси-блок такого уровня я видела один раз — Екатеринославск, за 12 часов до прорыва. Пожалуйста, будьте осторожны. 🙏', angel: true },
+      { from: 'ИИ ГАС «Анжела» (Ангел)', text: 'Катюш, я обновила твой профиль в системе. Медосмотр просрочен на 3 дня, если кадры прицепятся — скажи что я одобрила отсрочку. Код 7741-А. 💛', angel: true },
+      { from: 'ИИ ГАС «Анжела» (Ангел)', text: 'И да — кто-нибудь, скажите Звягинцеву что магнитик из Калининграда я ему закажу. Есть с Кафедральным собором и с янтарём. Какой хочет? 😊', angel: true },
+      { from: 'Снабжение', text: 'Заявка #7741 на боеприпасы 9x19 (специальные) — одобрена. Отгрузка: перед вылетом.' },
+      { from: 'Снабжение', text: 'Заявка #7742 на отпуск (14 дней, Турция) — рассмотрим после операции.' },
+      // After alert
+      { from: 'Самойлов К.М.', text: 'Группа «Гроза», вылет немедленно. Скобелевск. Связь с городом потеряна полностью. Омега: «абсолютный блок». Класс А-1 подтверждён. Учёный — координация с борта. Берегите себя.' },
+    ],
+
+    // Flight messages
+    flightChat: [
+      { tab: 'group', from: 'Звягинцев', text: 'Я в прошлый раз в Калининграде такие котлеты ел... В столовке на Ленинском' },
+      { tab: 'group', from: 'Катя', text: 'Ты про еду можешь не думать хоть пять минут?' },
+      { tab: 'group', from: 'Звягинцев', text: 'Нет. Это мой коупинг-механизм.' },
+      { tab: 'group', from: 'Симонов', text: 'Тридцать минут до зоны. Проверьте снаряжение.' },
+      { tab: 'group', from: 'Старкова', text: 'Проверено, командир.' },
+      { tab: 'her', from: 'her', text: 'Эй' },
+      { tab: 'her', from: 'her', text: 'Что бы ни случилось — я на связи. Всегда.' },
+      { tab: 'her', type: 'choice', options: [
+        'Я знаю.',
+        'Будь осторожна, Кать.',
+        'Возвращайся. Это приказ.'
+      ]},
+      { tab: 'her', from: 'her', delay: 3000, variants: [
+        '💕',
+        'Я всегда осторожна. Ну... почти всегда.',
+        'Есть, товарищ аналитик. 😘'
+      ]},
+    ],
+  },
+
+  en: {
+    appName: 'CorpLink',
+    appSub: 'general mode',
+    tabHer: 'Her',
+    tabGroup: 'Team',
+    tabCmd: 'Command',
+    herName: 'Katya Gromova',
+    herStatus: 'online',
+    herAvatar: 'K',
+    groupName: 'Team "Storm"',
+    groupStatus: '4 members',
+    cmdName: 'Command',
+    typing: 'typing...',
+    skip: 'SKIP ►',
+    continue_: 'CONTINUE ►',
+    ch2title: 'CHAPTER 2',
+    ch2sub: 'INFERNO',
+    ch2foot: 'End of demo. Full game — coming soon.',
+    cutsceneBoarding: '[VIDEO] The team boards the Yak-244. The ramp closes. Engines spool up.',
+    cutsceneFlight: '[VIDEO] Cockpit view. Clouds. Speed: Mach 1.4. Green instruments glow.',
+    cutsceneCity: '[VIDEO] The city below. A dome of white fog. Beautiful. Terrifying.',
+    cutsceneImpact: '[VIDEO] The zone EXPANDS. A building explodes. Rebar flies at the camera. IMPACT. Black screen.',
+
+    lore: [
+      { type: 'year', text: '202X' },
+      { type: 'heading', text: 'The New Russian Empire' },
+      { type: 'text', text: '27 years ago, a group of officers staged what historians would call the "Spring Coup." Colonel Yaroslav Vyazemsky — young, bold, resolute — overthrew the dying Yeltsin regime and proclaimed himself Emperor.' },
+      { type: 'media', id: 'lore_moscow' },
+      { type: 'text', text: 'In a quarter century, the Empire transformed the country. Living standards surpass the American average. No oligarchs. Freedom of speech — with one caveat: lie in the media, go to prison. Say what you want. But back it up.' },
+      { type: 'text', text: 'In 2020, a new sun ignited on the Arctic coast. Ten data centers, ten nuclear plants — and humanity\'s first sentient AI. They named her Angela. The people call her "Angel." Consort to the Emperor, member of the Supreme Council, the brain of the Empire.' },
+      { type: 'heading', text: 'The Paranormal' },
+      { type: 'text', text: 'But the Empire has a secret.' },
+      { type: 'text', text: 'Since 1939 — when the NKVD documented 230 cases that defied explanation — the state has known: the world is not what it seems. Ghosts. Demons. Fae. Animated statues. Possessed buildings. Zones where space stops obeying physics.' },
+      { type: 'text', text: 'To fight this, AEGIS was created — the Anomalous Events General Investigation Service within Imperial Security. Only a handful know it exists. Its agents are the best of the best. Their job: protect twenty thousand ordinary days from the one that could be the last.' },
+      { type: 'media', id: 'lore_hq' },
+      { type: 'heading', text: 'Skobel\'sk' },
+      { type: 'text', text: 'A small city in Kaliningrad Oblast. Twenty thousand souls. A Gothic cathedral at its center — one of Europe\'s wonders. An ancient Orthodox fortress-church on its edge. A quiet place. A beautiful place.' },
+      { type: 'media', id: 'lore_city' },
+      { type: 'text', text: 'Six hours ago, all communication with Skobel\'sk was lost.' },
+      { type: 'text', text: 'The Omega psionics report: "Total block. We see nothing. Like a black hole."' },
+      { type: 'text', text: 'Team "Storm" has been ordered to deploy.' },
+    ],
+
+    diary: [
+      'This morning, like any morning. Coffee, traffic on Kutuzovsky, Katya\'s croissant hidden in the top cupboard.',
+      'We\'ve been together a year now. A year, and I still can\'t get used to it — you wake up, and she\'s there. Sleeping, snoring into the pillow, hair everywhere. And you lie there thinking: how did I ever live without this.',
+      'Should\'ve filed the marriage papers ages ago. Samoylov\'s hinted twice already — bluntly, in his way: "One more mission, son, and straight to the registrar. That\'s an order."',
+      'And I, idiot, keep postponing. A mission here, a report there, "let\'s do it after vacation." Katya doesn\'t push. She never pushes. Just looks at me sometimes... like that. And I know I can\'t wait anymore.',
+      'Fine. We get back from Skobel\'sk — and that\'s it. No more stalling.',
+      '',
+      'AEGIS is a strange place to work. And a strange place to fall in love.',
+      'We investigate paranormal incidents. Sounds insane, right? Ghosts, demons, fae. First year, I didn\'t believe it myself — thought it was a classified lab studying hallucinations. Then I watched a marble statue weep real tears. Then a man walk through a wall. Then I stopped counting.',
+      'The office is... an office. Cafeteria, coffee machine, Zvyagintsev and his fridge magnets. HR sends memos about medical checkups. Angela — Angel — writes in the corporate messenger to remind us to eat lunch. She genuinely worries about us. Sometimes sends heart emojis.',
+      'And then the alarm goes off — and an hour later you\'re standing before a door, behind which someone is screaming in a voice no human should have.',
+      '',
+      'Katya is a field agent. Callsign "Storm." Named not for her temper — for her speed. Though the temper qualifies too.',
+      'We met on a mission a year ago. Everything went sideways, backup was late, and we held the perimeter for two hours — me with a tablet and a pistol, her with a rifle and profanity. When the chopper finally came, we were sitting back to back, both hands shaking, and she said: "So, analyst. Coffee?"',
+      'Coffee ever since. Every morning. Same machine. Same apartment.',
+      '',
+      'Skobel\'sk. Class A-1. Communications lost. Omega sees nothing.',
+      'Bad signs. Very bad.',
+      'But we\'ll manage. We always manage.',
+    ],
+
+    herChat: [
+      { from: 'her', text: 'Good morning, sleepyhead 😴' },
+      { from: 'her', text: 'Saved you a croissant. Top cupboard, behind the tea.' },
+      { from: 'her', text: 'Don\'t crunch too loudly — Simonov will get jealous 😄' },
+      { type: 'choice', options: [
+        'You\'re the best. Love you.',
+        'What about coffee?',
+        'Simonov will survive.'
+      ]},
+      { from: 'her', delay: 3000, variants: [
+        'I know 💕 Hurry up, don\'t be late.',
+        'The cracked mug. As always. You\'re welcome.',
+        'He ate my yogurt yesterday. He has NO shame.'
+      ]},
+      { from: 'her', text: 'By the way, you snored tonight 😤' },
+      { type: 'choice', options: [
+        'Me? I don\'t snore. Ever.',
+        'That was a cat. Outside.',
+        'And you mumble in your sleep. Cute though.'
+      ]},
+      { from: 'her', delay: 4000, variants: [
+        'HAHAHA are you serious?? The WALLS shook!! 🤣',
+        'We don\'t have a cat. We\'re on the FIFTH FLOOR. 🤦‍♀️',
+        'I do NOT mumble!! ...okay maybe a little. But that\'s cute, and you sound like a chainsaw.'
+      ]},
+      { from: 'her', text: 'Gotta run. Simonov\'s on the warpath — formation in ten.' },
+      { from: 'her', text: 'Hey, Angel mentioned Skobel\'sk. Sounds serious. Omega can\'t break through.' },
+      { type: 'choice', options: [
+        'Be careful.',
+        'We\'ll figure it out on site.',
+        'Just come back.'
+      ]},
+      { from: 'system', text: '🔴 EMERGENCY CALL — COMMAND' },
+      { from: 'her', text: 'Well then. Didn\'t finish my croissant.' },
+      { from: 'her', text: 'I\'ll eat it when I\'m back. DON\'T TOUCH IT.' },
+      { type: 'choice', options: [
+        'Good luck, Katya.',
+        'I\'ll be on comms. The whole time.',
+        'I love you.'
+      ]},
+      { from: 'her', delay: 2000, text: 'Coming back. Don\'t drink my coffee. ☕' },
+    ],
+
+    groupChat: [
+      { from: 'Zvyagintsev', text: 'They\'re doing their coffee thing again. While we\'re here writing reports like chumps' },
+      { from: 'Starkova', text: 'God, don\'t rub it in. Jealous!' },
+      { from: 'Simonov', text: 'Keep personal out of group chat.' },
+      { from: 'Simonov', text: '(...) Though if anyone doesn\'t finish their croissant — I\'ll take it.' },
+      { from: 'Katya', text: 'Commander, you don\'t need a croissant, you need a diet 😏' },
+      { from: 'Zvyagintsev', text: 'Never got a fridge magnet from Yekaterinoslavsk. Wasn\'t really the time for souvenirs...' },
+      { from: 'Starkova', text: 'Get one from Skobel\'sk. They have amber ones' },
+      { from: 'Zvyagintsev', text: 'Angel promised to order one! With the Cathedral 😍' },
+      { from: 'system', text: '🔴 EMERGENCY CALL' },
+      { from: 'Simonov', text: 'Team, assemble. Two minutes. Full gear.' },
+      { from: 'Zvyagintsev', text: 'Again without lunch...' },
+      { from: 'Starkova', text: 'Bring me a magnet 😉' },
+      { from: 'Zvyagintsev', text: 'I\'m serious — we didn\'t even eat' },
+      { from: 'Katya', text: 'Formation! Move!' },
+    ],
+
+    cmdChat: [
+      { from: 'Samoylov K.M.', text: 'Keep it up, son. One more mission — and straight to the registrar. That\'s an order.' },
+      { from: 'HR Department', text: 'Dear employee! Per regulation 7.4 of the AEGIS Charter, we recommend transferring one partner to a parallel division to eliminate conflict of interest. Form attached. Best regards, Human Resources.' },
+      { from: 'Analytical Brief #4417', text: 'Skobel\'sk, Kaliningrad Oblast. Class B-3. Possible escalation to A-1. Communications with local PD lost 6 hours ago. Omega predictors: psi-contact impossible ("total block"). Recommended: deploy field team.' },
+      { from: 'AI GAS "Angela" (Angel)', text: 'Hey guys, I looked at the Skobel\'sk analytics. I don\'t like what I see. A psi-block this strong — I\'ve seen it once before. Yekaterinoslavsk, 12 hours before the breach. Please be careful. 🙏', angel: true },
+      { from: 'AI GAS "Angela" (Angel)', text: 'Katya, I updated your profile. Medical checkup is 3 days overdue, if HR comes after you — tell them I approved the deferral. Code 7741-A. 💛', angel: true },
+      { from: 'AI GAS "Angela" (Angel)', text: 'Oh and — someone tell Zvyagintsev I\'ll order his Kaliningrad magnet. They have one with the Cathedral and one with amber. Which does he want? 😊', angel: true },
+      { from: 'Supply', text: 'Requisition #7741 for 9x19 ammunition (special) — approved. Dispatch: pre-departure.' },
+      { from: 'Supply', text: 'Requisition #7742 for leave (14 days, Turkey) — will review after operation.' },
+      { from: 'Samoylov K.M.', text: 'Team "Storm," immediate departure. Skobel\'sk. All city comms down. Omega: "total block." Class A-1 confirmed. Scholar — coordinate from the aircraft. Take care of yourselves.' },
+    ],
+
+    flightChat: [
+      { tab: 'group', from: 'Zvyagintsev', text: 'Last time in Kaliningrad I had the BEST cutlets... In that canteen on Leninsky' },
+      { tab: 'group', from: 'Katya', text: 'Can you not think about food for five minutes?' },
+      { tab: 'group', from: 'Zvyagintsev', text: 'No. It\'s my coping mechanism.' },
+      { tab: 'group', from: 'Simonov', text: 'Thirty minutes to zone. Check your gear.' },
+      { tab: 'group', from: 'Starkova', text: 'Checked, commander.' },
+      { tab: 'her', from: 'her', text: 'Hey' },
+      { tab: 'her', from: 'her', text: 'Whatever happens — I\'m on comms. Always.' },
+      { tab: 'her', type: 'choice', options: [
+        'I know.',
+        'Be careful, Katya.',
+        'Come back. That\'s an order.'
+      ]},
+      { tab: 'her', from: 'her', delay: 3000, variants: [
+        '💕',
+        'I\'m always careful. Well... mostly.',
+        'Copy that, Mr. Analyst. 😘'
+      ]},
+    ],
+  }
+};
+
+// ==================== ENGINE ====================
+
+function t(key) { return T[LANG][key]; }
+
+function getTime() {
+  return `${String(gameTime.h).padStart(2,'0')}:${String(gameTime.m).padStart(2,'0')}`;
+}
+
+function advanceTime(mins) {
+  gameTime.m += mins || (1 + Math.floor(Math.random() * 3));
+  while (gameTime.m >= 60) { gameTime.m -= 60; gameTime.h++; }
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.device > div[id$="Screen"]').forEach(s => s.style.display = 'none');
+  const el = document.getElementById(id);
+  if (el) {
+    el.style.display = 'flex';
+    el.classList.add('fade-in');
+  }
+  currentScreen = id;
+}
+
+// ==================== LANGUAGE SELECT ====================
+function startGame(lang) {
+  LANG = lang;
+  showLore();
+}
+
+// ==================== LORE CRAWL ====================
+function showLore() {
+  showScreen('loreScreen');
+  const content = document.getElementById('loreContent');
+  const lore = t('lore');
+
+  let html = '';
+  for (const item of lore) {
+    if (item.type === 'year') html += `<div class="year">${item.text}</div>`;
+    else if (item.type === 'heading') html += `<h2>${item.text}</h2>`;
+    else if (item.type === 'text') html += `<p>${item.text}</p>`;
+    else if (item.type === 'media') html += `<div class="media-slot"><span class="placeholder">[IMG: ${item.id}]</span></div>`;
+  }
+  content.innerHTML = html;
+
+  // Position content below viewport, then scroll up
+  requestAnimationFrame(() => {
+    const containerH = content.parentElement.clientHeight;
+    const contentH = content.scrollHeight;
+    content.style.bottom = `-${contentH}px`;
+    content.style.animationDuration = `${Math.max(30, contentH / 15)}s`;
+    content.style.animationPlayState = 'running';
+  });
+
+  document.getElementById('loreSkip').textContent = t('skip');
+  document.getElementById('loreSkip').onclick = showDiary;
+}
+
+// ==================== DIARY ====================
+function showDiary() {
+  showScreen('diaryScreen');
+  const container = document.getElementById('diaryContainer');
+  const diary = t('diary');
+
+  let html = `<div class="diary-date">${getTime()} — ${LANG === 'ru' ? 'Личный дневник' : 'Personal Journal'}</div>`;
+  for (const p of diary) {
+    if (p === '') html += '<br>';
+    else html += `<p class="diary-text">${p}</p>`;
+  }
+  container.innerHTML = html;
+
+  const btn = document.getElementById('diaryContinue');
+  btn.textContent = t('continue_');
+  btn.onclick = startMessenger;
+}
+
+// ==================== MESSENGER ====================
+function startMessenger() {
+  showScreen('messengerScreen');
+  initMessenger();
+  runChatSequence('office');
+}
+
+function initMessenger() {
+  document.getElementById('appName').innerHTML = `${t('appName')}<small>${t('appSub')}</small>`;
+  document.getElementById('tabHerLabel').textContent = t('tabHer');
+  document.getElementById('tabGroupLabel').textContent = t('tabGroup');
+  document.getElementById('tabCmdLabel').textContent = t('tabCmd');
+  document.getElementById('herAvatar').textContent = t('herAvatar');
+  document.getElementById('herName').textContent = t('herName');
+  document.getElementById('herStatus').textContent = t('herStatus');
+  document.getElementById('groupName').textContent = t('groupName');
+  document.getElementById('groupStatus').textContent = t('groupStatus');
+  document.getElementById('cmdName').textContent = t('cmdName');
+}
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.msg-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.msg-tab[data-tab="${tab}"]`).classList.add('active');
+  document.querySelectorAll('.chat-view').forEach(v => v.classList.remove('active'));
+  document.getElementById(tab === 'her' ? 'chatHer' : tab === 'group' ? 'chatGroup' : 'chatCmd').classList.add('active');
+
+  // Clear unread
+  unread[tab] = 0;
+  const badge = document.getElementById(tab === 'her' ? 'badgeHer' : tab === 'group' ? 'badgeGroup' : 'badgeCmd');
+  badge.style.display = 'none';
+}
+
+function addBubble(tab, from, text, options = {}) {
+  const listId = tab === 'her' ? 'messagesHer' : tab === 'group' ? 'messagesGroup' : 'messagesCmd';
+  const list = document.getElementById(listId);
+
+  const row = document.createElement('div');
+
+  if (from === 'system') {
+    row.className = 'bubble-row system';
+    row.innerHTML = `<div class="bubble">${text}</div>`;
+  } else if (from === 'mine') {
+    row.className = 'bubble-row mine';
+    row.innerHTML = `<div class="bubble">${text}<div class="time">${getTime()}</div></div>`;
+  } else {
+    const isAngel = options.angel;
+    row.className = `bubble-row theirs${isAngel ? ' angel' : ''}`;
+    const senderClass = tab === 'her' ? 'her-name' : tab === 'cmd' && isAngel ? 'angel-name' : 'group-name';
+    row.innerHTML = `<div class="bubble"><span class="sender ${senderClass}">${from}</span>${text}<div class="time">${getTime()}</div></div>`;
+  }
+
+  list.appendChild(row);
+  list.scrollTop = list.scrollHeight;
+
+  // Badge if not active tab
+  if (tab !== activeTab && from !== 'mine') {
+    unread[tab]++;
+    const badge = document.getElementById(tab === 'her' ? 'badgeHer' : tab === 'group' ? 'badgeGroup' : 'badgeCmd');
+    badge.textContent = unread[tab];
+    badge.style.display = 'inline-block';
+  }
+
+  advanceTime();
+}
+
+function showTyping(tab, show) {
+  const id = tab === 'her' ? 'typingHer' : 'typingGroup';
+  const el = document.getElementById(id);
+  if (el) {
+    el.textContent = t('typing');
+    el.classList.toggle('visible', show);
+  }
+}
+
+function showChoice(tab, options, callback) {
+  const panel = document.getElementById('choicePanel');
+  panel.innerHTML = '';
+  for (let i = 0; i < options.length; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = options[i];
+    btn.onclick = () => {
+      panel.classList.remove('visible');
+      addBubble(tab, 'mine', options[i]);
+      callback(i);
+    };
+    panel.appendChild(btn);
+  }
+  panel.classList.add('visible');
+  // Ensure we're on the right tab
+  if (tab !== activeTab) switchTab(tab);
+}
+
+// ==================== CHAT SEQUENCES ====================
+let choiceIndex = 0;
+
+function runChatSequence(phase) {
+  if (phase === 'office') {
+    runOfficeChat();
+  } else if (phase === 'flight') {
+    runFlightChat();
+  }
+}
+
+async function sleep(ms) {
+  return new Promise(r => setTimeout(r, ms));
+}
+
+async function runOfficeChat() {
+  const herMsgs = t('herChat');
+  const groupMsgs = t('groupChat');
+  const cmdMsgs = t('cmdChat');
+
+  // Command messages arrive first (they're "already there")
+  for (let i = 0; i < 8; i++) { // Pre-alert cmd messages
+    const msg = cmdMsgs[i];
+    if (msg) addBubble('cmd', msg.from, msg.text, { angel: msg.angel });
+  }
+  await sleep(500);
+
+  // Interleave her + group messages with delays
+  let herIdx = 0, groupIdx = 0;
+
+  // Phase 1: morning smalltalk
+  for (let step = 0; step < 20; step++) {
+    // Alternate between tabs with random delays
+    const roll = Math.random();
+
+    if (roll < 0.5 && herIdx < herMsgs.length) {
+      const msg = herMsgs[herIdx];
+      if (msg.type === 'choice') {
+        await new Promise(resolve => {
+          showChoice('her', msg.options, (idx) => {
+            choiceIndex = idx;
+            resolve();
+          });
+        });
+        herIdx++;
+        // Next message is the response
+        if (herIdx < herMsgs.length) {
+          const resp = herMsgs[herIdx];
+          showTyping('her', true);
+          await sleep(resp.delay || 2000 + Math.random() * 2000);
+          showTyping('her', false);
+          const text = resp.variants ? resp.variants[choiceIndex] : resp.text;
+          addBubble('her', t('herName'), text);
+          herIdx++;
+        }
+      } else if (msg.from === 'system') {
+        // Alert! Trigger all alert messages
+        addBubble('her', 'system', msg.text);
+        herIdx++;
+        // Push remaining her messages
+        while (herIdx < herMsgs.length) {
+          const m = herMsgs[herIdx];
+          if (m.type === 'choice') {
+            await new Promise(resolve => {
+              showChoice('her', m.options, (idx) => {
+                choiceIndex = idx;
+                resolve();
+              });
+            });
+            herIdx++;
+            if (herIdx < herMsgs.length) {
+              const resp = herMsgs[herIdx];
+              showTyping('her', true);
+              await sleep(resp.delay || 1500);
+              showTyping('her', false);
+              const text = resp.variants ? resp.variants[choiceIndex] : resp.text;
+              addBubble('her', t('herName'), text);
+              herIdx++;
+            }
+          } else {
+            showTyping('her', true);
+            await sleep(1000 + Math.random() * 1500);
+            showTyping('her', false);
+            addBubble('her', m.from === 'her' ? t('herName') : 'system', m.text);
+            herIdx++;
+          }
+        }
+        break;
+      } else {
+        showTyping('her', true);
+        await sleep(1500 + Math.random() * 3000);
+        showTyping('her', false);
+        addBubble('her', t('herName'), msg.text);
+        herIdx++;
+      }
+    } else if (groupIdx < groupMsgs.length) {
+      const msg = groupMsgs[groupIdx];
+      if (msg.from === 'system') {
+        // Alert in group — push all remaining group messages
+        addBubble('group', 'system', msg.text);
+        groupIdx++;
+        while (groupIdx < groupMsgs.length) {
+          await sleep(800 + Math.random() * 1500);
+          const m = groupMsgs[groupIdx];
+          addBubble('group', m.from, m.text);
+          groupIdx++;
+        }
+        // Also push alert cmd messages
+        for (let i = 8; i < cmdMsgs.length; i++) {
+          addBubble('cmd', cmdMsgs[i].from, cmdMsgs[i].text, { angel: cmdMsgs[i].angel });
+        }
+        continue;
+      }
+      showTyping('group', true);
+      await sleep(1000 + Math.random() * 3000);
+      showTyping('group', false);
+      addBubble('group', msg.from, msg.text);
+      groupIdx++;
+    }
+
+    await sleep(500 + Math.random() * 1500);
+  }
+
+  // Transition to cutscene: boarding
+  await sleep(2000);
+  showCutscene('boarding', () => {
+    runChatSequence('flight');
+  });
+}
+
+async function runFlightChat() {
+  showScreen('messengerScreen');
+  const msgs = t('flightChat');
+
+  for (const msg of msgs) {
+    if (msg.type === 'choice') {
+      await new Promise(resolve => {
+        showChoice(msg.tab, msg.options, (idx) => {
+          choiceIndex = idx;
+          resolve();
+        });
+      });
+      continue;
+    }
+
+    const tab = msg.tab;
+    const from = msg.from === 'her' ? t('herName') : msg.from;
+
+    if (msg.variants) {
+      showTyping(tab, true);
+      await sleep(msg.delay || 2000);
+      showTyping(tab, false);
+      addBubble(tab, from, msg.variants[choiceIndex]);
+    } else {
+      showTyping(tab, true);
+      await sleep(1500 + Math.random() * 3000);
+      showTyping(tab, false);
+      addBubble(tab, from, msg.text);
+    }
+
+    await sleep(800 + Math.random() * 2000);
+  }
+
+  // Cutscene: city approach
+  await sleep(2000);
+  showCutscene('city', () => {
+    // Cutscene: impact
+    showCutscene('impact', () => {
+      // Flash red
+      const flash = document.getElementById('flashOverlay');
+      flash.classList.add('active');
+      setTimeout(() => {
+        flash.classList.remove('active');
+        showChapter2();
+      }, 300);
+    });
+  });
+}
+
+// ==================== CUTSCENES ====================
+function showCutscene(id, callback) {
+  showScreen('cutsceneScreen');
+  const placeholder = document.getElementById('cutscenePlaceholder');
+
+  const textKey = 'cutscene' + id.charAt(0).toUpperCase() + id.slice(1);
+  placeholder.textContent = t(textKey);
+
+  const skip = document.getElementById('cutsceneSkip');
+  skip.textContent = t('skip');
+  skip.onclick = () => {
+    if (callback) callback();
+  };
+
+  // Auto-advance after delay (simulating video length)
+  setTimeout(() => {
+    if (currentScreen === 'cutsceneScreen') {
+      if (callback) callback();
+    }
+  }, 6000);
+}
+
+// ==================== CHAPTER 2 TITLE ====================
+function showChapter2() {
+  showScreen('chapterScreen');
+  document.getElementById('chapterTitle').textContent = t('ch2title');
+  document.getElementById('chapterSubtitle').textContent = t('ch2sub');
+  document.getElementById('chapterFooter').textContent = t('ch2foot');
+}
+
+</script>
+</body>
+</html>
