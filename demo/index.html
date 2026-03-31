@@ -210,6 +210,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;b
 let L='ru',tab='her',gt={h:8,m:15},unread={her:0,grp:0,cmd:0};
 let choiceResolve=null,impatienceTimer=null,choiceIdx=0;
 let mailbox=[],openMailId=null;
+let bond=50; // Relationship: 0=ice, 50=love, 100=devotion
 
 const TX={ru:{
 app:'КорпСвязь',sub:'общий режим',tHer:'Она',tGrp:'Группа',tCmd:'Командование',
@@ -300,7 +301,7 @@ seq:[
 {to:'her',f:'her',x:'Не хрусти громко — Симонов обидится 😄'},
 {to:'grp',f:'Старкова',x:'Блядь, не трави душу. Завидую!'},
 {w:400},
-{to:'her',ch:['Ты лучшая ❤️','А кофе?','Симонов переживёт'],
+{to:'her',ch:['Ты лучшая ❤️','А кофе?','Симонов переживёт'],b:[5,0,-3],
   r:['Я знаю 💕 Давай, не опаздывай','В кружке с трещиной. Как всегда. Не благодари 😘','Он вчера мой йогурт сожрал. Ему ничего не жалко 😤']},
 {to:'grp',f:'Симонов',x:'Отставить личное в групповом.'},
 {w:300},
@@ -312,7 +313,7 @@ seq:[
 {to:'her',f:'her',x:'Кстати, ты храпел сегодня 😤'},
 {w:400},
 {to:'grp',f:'Звягинцев',x:'Ангел обещала заказать! С Кафедральным собором 😍'},
-{to:'her',ch:['Я? Не храплю. Никогда.','Это был кот за окном.','Зато ты сопишь. Мило.'],
+{to:'her',ch:['Я? Не храплю. Никогда.','Это был кот за окном.','Зато ты сопишь. Мило.'],b:[-2,0,5],
   r:['АХАХАХ серьёзно?? Стены тряслись!! 🤣','У нас нет кота. У нас ПЯТЫЙ ЭТАЖ 🤦‍♀️','Я НЕ соплю!! ...ладно, может чуть-чуть 😳']},
 // Group: weekend plans
 {to:'grp',f:'Звягинцев',x:'Народ, кто на шашлыки в субботу? Я мангал обещал притащить'},
@@ -331,7 +332,7 @@ seq:[
 {to:'grp',f:'Симонов',x:'Звягинцев.'},
 {to:'grp',f:'Звягинцев',x:'Молчу-молчу 🤐'},
 {w:300},
-{to:'her',ch:['Будь осторожна.','Разберёмся на месте.','Главное — вернись.'],
+{to:'her',ch:['Будь осторожна.','Разберёмся на месте.','Главное — вернись.'],b:[3,0,5],
   r:['Всегда. Ну... почти 😉','Мы всегда разбираемся. Просто иногда громко','Обязательно. Мне ещё круассан доедать 🥐']},
 // Group: fishing
 {to:'grp',f:'Старкова',x:'Звягинцев, ты обещал на рыбалку позвать'},
@@ -355,7 +356,7 @@ seq:[
 {to:'her',f:'her',x:'Ну вот. А я круассан не доела.'},
 {to:'her',f:'her',x:'Ладно, съем когда вернусь. НЕ ТРОГАЙ.'},
 {w:300},
-{to:'her',ch:['Удачи, Кать.','Я буду на связи. Всё время.','Люблю тебя.'],
+{to:'her',ch:['Удачи, Кать.','Я буду на связи. Всё время.','Люблю тебя.'],b:[2,3,7],
   r:['И тебе. Увидимся через пару часов 💕','Я знаю. Ты всегда на связи. Спасибо 💕','И я тебя. Дурак мой 💕']},
 {w:500},
 {to:'her',f:'her',x:'Вернусь. Не пей мой кофе. ☕'},
@@ -372,7 +373,7 @@ seq:[
 {w:400},
 {to:'her',f:'her',x:'Эй.'},
 {to:'her',f:'her',x:'Что бы ни случилось — я на связи. Всегда.'},
-{to:'her',ch:['Я знаю.','Будь осторожна, Кать.','Возвращайся. Это приказ.'],
+{to:'her',ch:['Я знаю.','Будь осторожна, Кать.','Возвращайся. Это приказ.'],b:[3,4,1],
   r:['💕','Я всегда осторожна. Ну... почти 😏','Есть, товарищ аналитик 😘']},
 {to:'grp',f:'Звягинцев',x:'Ладно, пристегнулись. Если что — я завещаю свою коллекцию магнитиков Старковой'},
 {to:'grp',f:'Старкова',x:'Тронута. Серьёзно 🥲'},
@@ -468,7 +469,7 @@ seq:[
 {to:'her',f:'her',x:'Don\'t crunch loudly — Simonov will get jealous 😄'},
 {to:'grp',f:'Starkova',x:'Don\'t rub it in. Jealous!'},
 {w:400},
-{to:'her',ch:['You\'re the best ❤️','What about coffee?','Simonov will survive.'],
+{to:'her',ch:['You\'re the best ❤️','What about coffee?','Simonov will survive.'],b:[5,0,-3],
   r:['I know 💕 Don\'t be late','The cracked mug. As always 😘','He ate my yogurt yesterday. NO shame 😤']},
 {to:'grp',f:'Simonov',x:'Keep personal out of group.'},
 {w:300},
@@ -480,7 +481,7 @@ seq:[
 {to:'her',f:'her',x:'By the way, you snored tonight 😤'},
 {w:400},
 {to:'grp',f:'Zvyagintsev',x:'Angel\'s ordering me one! With the Cathedral 😍'},
-{to:'her',ch:['Me? I don\'t snore. Ever.','That was a cat. Outside.','You mumble in your sleep. Cute though.'],
+{to:'her',ch:['Me? I don\'t snore. Ever.','That was a cat. Outside.','You mumble in your sleep. Cute though.'],b:[-2,0,5],
   r:['HAHAHA the WALLS shook!! 🤣','We don\'t HAVE a cat. FIFTH FLOOR. 🤦‍♀️','I do NOT!! ...okay maybe 😳']},
 {to:'grp',f:'Zvyagintsev',x:'BBQ Saturday? I promised to bring the grill'},
 {to:'grp',f:'Starkova',x:'Yes! But NOT like last time — 3 hours marinating then burning everything'},
@@ -497,7 +498,7 @@ seq:[
 {to:'grp',f:'Simonov',x:'Zvyagintsev.'},
 {to:'grp',f:'Zvyagintsev',x:'Shutting up 🤐'},
 {w:300},
-{to:'her',ch:['Be careful.','We\'ll figure it out.','Just come back.'],
+{to:'her',ch:['Be careful.','We\'ll figure it out.','Just come back.'],b:[3,0,5],
   r:['Always. Well... mostly 😉','We always do. Sometimes loudly','I will. Still got a croissant to finish 🥐']},
 {to:'grp',f:'Starkova',x:'Zvyagintsev, you promised fishing next weekend'},
 {to:'grp',f:'Zvyagintsev',x:'If we don\'t get sent ghost-hunting!'},
@@ -519,7 +520,7 @@ seq:[
 {to:'her',f:'her',x:'Well. Didn\'t finish my croissant.'},
 {to:'her',f:'her',x:'I\'ll eat it when I\'m back. DON\'T TOUCH IT.'},
 {w:300},
-{to:'her',ch:['Good luck, Katya.','I\'ll be on comms. Always.','I love you.'],
+{to:'her',ch:['Good luck, Katya.','I\'ll be on comms. Always.','I love you.'],b:[2,3,7],
   r:['You too. See you in a few hours 💕','I know. You always are. Thank you 💕','Love you too. My idiot 💕']},
 {w:500},
 {to:'her',f:'her',x:'Coming back. Don\'t drink my coffee. ☕'},
@@ -535,7 +536,7 @@ seq:[
 {w:400},
 {to:'her',f:'her',x:'Hey.'},
 {to:'her',f:'her',x:'Whatever happens — I\'m on comms. Always.'},
-{to:'her',ch:['I know.','Be careful, Katya.','Come back. That\'s an order.'],
+{to:'her',ch:['I know.','Be careful, Katya.','Come back. That\'s an order.'],b:[3,4,1],
   r:['💕','Always careful. Mostly 😏','Copy that, Mr. Analyst 😘']},
 {to:'grp',f:'Zvyagintsev',x:'If anything happens — I bequeath my magnet collection to Starkova'},
 {to:'grp',f:'Starkova',x:'Touched. Genuinely 🥲'},
@@ -634,6 +635,7 @@ function sw(tb){
   unread[tb]=0;
   const badge=document.getElementById(tb==='her'?'bH':tb==='grp'?'bG':'bC');
   badge.style.display='none';
+  updateInputArea();
 }
 
 function addB(to,from,text,opts={}){
@@ -786,26 +788,45 @@ function startImp(to){
 function stopImp(){clearTimeout(impatienceTimer)}
 
 // CHOICES
+let activeChoiceTab=null;
 function showCh(to,opts){
   return new Promise(resolve=>{
     if(to!==tab)sw(to);
+    activeChoiceTab=to;
+    updateInputArea();
     const ch=document.getElementById('choices');
-    const inp=document.getElementById('txtIn');
-    inp.style.display='none';
-    document.getElementById('sendBtn').style.display='none';
     ch.innerHTML='';ch.style.display='flex';
     startImp(to);
     for(let i=0;i<opts.length;i++){
-      const b=document.createElement('button');b.className='ch-btn';b.textContent=opts[i];
-      b.onclick=()=>{
+      const btn=document.createElement('button');btn.className='ch-btn';btn.textContent=opts[i];
+      btn.onclick=()=>{
         stopImp();
-        ch.style.display='none';inp.style.display='';document.getElementById('sendBtn').style.display='';
+        activeChoiceTab=null;
+        ch.style.display='none';
+        updateInputArea();
         addB(to,'mine',opts[i]);
         resolve(i);
       };
-      ch.appendChild(b);
+      ch.appendChild(btn);
     }
   });
+}
+// Show/hide input area based on active tab and choice state
+function updateInputArea(){
+  const ia=document.getElementById('inputArea');
+  const ch=document.getElementById('choices');
+  const inp=document.getElementById('txtIn');
+  const send=document.getElementById('sendBtn');
+  // Hide entire input area on cmd tab (it's an inbox)
+  if(tab==='cmd'){ia.style.display='none';return}
+  ia.style.display='';
+  // If there's an active choice on THIS tab, show choices, hide input
+  if(activeChoiceTab===tab){
+    ch.style.display='flex';inp.style.display='none';send.style.display='none';
+  } else {
+    // No active choice for this tab — show input, hide choices
+    ch.style.display='none';inp.style.display='';send.style.display='';
+  }
 }
 
 // CUTSCENE
@@ -852,6 +873,8 @@ async function runSeq(){
     // Choice
     if(s.ch){
       const idx=await showCh(s.to,s.ch);
+      // Apply bond change
+      if(s.b&&s.b[idx]!==undefined){bond=Math.max(0,Math.min(100,bond+s.b[idx]));console.log('Bond:',bond)}
       showTyp(s.to,true);await sl(800+Math.random()*1000);showTyp(s.to,false);
       addB(s.to,s.to==='her'?t('hName'):'',s.r[idx]);
       continue;
