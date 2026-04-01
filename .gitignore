@@ -1,0 +1,31 @@
+# Binaries
+*.exe
+*.apk
+*.aar
+
+# Build
+build/
+dist/
+*.msi
+
+# Encrypted content (generated from .json)
+content/**/*.enc
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Go
+vendor/
+
+# Android
+android/app/build/
+android/.gradle/
+android/local.properties

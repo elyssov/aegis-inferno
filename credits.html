@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AEGIS:Inferno — Credits</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Cinzel:wght@400;700&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:#030508;
+  color:#c8ccd0;
+  font-family:'Inter',sans-serif;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  overflow-y:auto;
+}
+
+.credits{
+  max-width:800px;
+  width:100%;
+  padding:80px 40px 120px;
+  position:relative;
+}
+
+/* Subtle side lines */
+.credits::before, .credits::after{
+  content:'';
+  position:fixed;
+  top:0;bottom:0;
+  width:1px;
+  background:linear-gradient(180deg, transparent 0%, #daa52030 20%, #daa52015 80%, transparent 100%);
+}
+.credits::before{left:calc(50% - 420px)}
+.credits::after{right:calc(50% - 420px)}
+
+/* Top emblem */
+.emblem{
+  text-align:center;
+  margin-bottom:60px;
+}
+.emblem-icon{
+  font-size:48px;
+  color:#daa520;
+  filter:drop-shadow(0 0 20px rgba(218,165,32,0.3));
+  margin-bottom:16px;
+}
+.emblem h1{
+  font-family:'Orbitron',sans-serif;
+  font-size:28px;
+  letter-spacing:6px;
+  color:#daa520;
+  margin-bottom:8px;
+}
+.emblem h2{
+  font-family:'Orbitron',sans-serif;
+  font-size:12px;
+  letter-spacing:4px;
+  color:#8a7a50;
+  text-transform:uppercase;
+}
+
+/* Section */
+.section{
+  margin-bottom:56px;
+}
+.section-title{
+  font-family:'Cinzel',serif;
+  font-size:14px;
+  letter-spacing:6px;
+  text-transform:uppercase;
+  color:#daa520;
+  text-align:center;
+  margin-bottom:8px;
+  position:relative;
+}
+.section-line{
+  height:1px;
+  background:linear-gradient(90deg, transparent, #daa52040, transparent);
+  margin-bottom:32px;
+}
+
+/* Names grid */
+.names{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:0;
+}
+.name{
+  width:50%;
+  text-align:center;
+  padding:8px 12px;
+  font-size:15px;
+  font-weight:300;
+  letter-spacing:1.5px;
+  color:#a0a8b0;
+  line-height:1.8;
+  transition:color 0.3s;
+}
+
+/* Tier styles */
+.tier-hero .names .name{
+  width:100%;
+  font-family:'Cinzel',serif;
+  font-size:20px;
+  color:#daa520;
+  letter-spacing:3px;
+  padding:12px;
+  text-shadow:0 0 30px rgba(218,165,32,0.2);
+}
+
+.tier-champion .names .name{
+  width:50%;
+  font-size:17px;
+  color:#c0b080;
+  letter-spacing:2px;
+}
+
+.tier-supporter .names .name{
+  width:33.33%;
+  font-size:14px;
+  color:#909498;
+  letter-spacing:1px;
+}
+
+/* Bottom */
+.bottom-section{
+  text-align:center;
+  margin-top:80px;
+  padding-top:40px;
+  border-top:1px solid #daa52015;
+}
+.bottom-section p{
+  font-size:12px;
+  color:#505860;
+  letter-spacing:2px;
+  line-height:2;
+}
+.bottom-section .quote{
+  font-family:'Cinzel',serif;
+  font-size:14px;
+  color:#daa520;
+  letter-spacing:2px;
+  margin-top:24px;
+  font-style:italic;
+  opacity:0.7;
+}
+
+/* Vignette */
+.vignette{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:radial-gradient(ellipse at center, transparent 50%, #030508 100%);
+  z-index:10;
+}
+
+/* Noise */
+.noise{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:11;
+  opacity:0.02;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:256px;
+}
+
+@media(max-width:600px){
+  .credits{padding:40px 20px 80px}
+  .name{width:100%!important;font-size:13px!important}
+  .tier-hero .names .name{font-size:16px!important}
+  .tier-champion .names .name{font-size:14px!important}
+}
+</style>
+</head>
+<body>
+
+<div class="vignette"></div>
+<div class="noise"></div>
+
+<div class="credits">
+
+  <div class="emblem">
+    <div class="emblem-icon">&#9670;</div>
+    <h1>AEGIS: INFERNO</h1>
+    <h2>Our Supporters</h2>
+  </div>
+
+  <!-- TIER 1: HEROES OF THE EMPIRE (top backers) -->
+  <div class="section tier-hero">
+    <div class="section-title">&#9733; Heroes of the Empire &#9733;</div>
+    <div class="section-line"></div>
+    <div class="names">
+      <div class="name">Alexander Volkov</div>
+      <div class="name">Victoria Sterling</div>
+      <div class="name">Dmitri Karenin</div>
+      <div class="name">Isabella Rossi</div>
+      <div class="name">Maximilian Richter</div>
+    </div>
+  </div>
+
+  <!-- TIER 2: CHAMPIONS (mid backers) -->
+  <div class="section tier-champion">
+    <div class="section-title">Champions of the Flame</div>
+    <div class="section-line"></div>
+    <div class="names">
+      <div class="name">John Doe</div>
+      <div class="name">Luigi Mario</div>
+      <div class="name">Sakura Tanaka</div>
+      <div class="name">Henrik Johansson</div>
+      <div class="name">Maria del Carmen</div>
+      <div class="name">Yuki Nakamura</div>
+      <div class="name">Patrick O'Sullivan</div>
+      <div class="name">Anastasia Lebedeva</div>
+      <div class="name">Chen Wei</div>
+      <div class="name">Francois Dubois</div>
+      <div class="name">Katarina Novak</div>
+      <div class="name">Ahmed Al-Rashid</div>
+    </div>
+  </div>
+
+  <!-- TIER 3: SUPPORTERS (basic backers) -->
+  <div class="section tier-supporter">
+    <div class="section-title">Torchbearers</div>
+    <div class="section-line"></div>
+    <div class="names">
+      <div class="name">James Smith</div>
+      <div class="name">Elena Petrova</div>
+      <div class="name">Hans Mueller</div>
+      <div class="name">Mei Lin Zhang</div>
+      <div class="name">Carlos Gutierrez</div>
+      <div class="name">Olga Smirnova</div>
+      <div class="name">Takeshi Yamamoto</div>
+      <div class="name">Sarah Johnson</div>
+      <div class="name">Pierre Moreau</div>
+      <div class="name">Anya Kowalski</div>
+      <div class="name">Liam O'Brien</div>
+      <div class="name">Sofia Andersson</div>
+      <div class="name">Raj Patel</div>
+      <div class="name">Emma Williams</div>
+      <div class="name">Ivan Petrov</div>
+      <div class="name">Chloe Martin</div>
+      <div class="name">Nikolai Volkov</div>
+      <div class="name">Hana Kimura</div>
+      <div class="name">Marcus Brown</div>
+      <div class="name">Ingrid Bergstrom</div>
+      <div class="name">Diego Fernandez</div>
+      <div class="name">Natasha Ivanova</div>
+      <div class="name">William Taylor</div>
+      <div class="name">Aria Rosenberg</div>
+      <div class="name">Sergei Kuznetsov</div>
+      <div class="name">Emilia Virtanen</div>
+      <div class="name">Omar Hassan</div>
+      <div class="name">Julia Schneider</div>
+      <div class="name">Kenji Watanabe</div>
+      <div class="name">Lucia Esposito</div>
+    </div>
+  </div>
+
+  <!-- BOTTOM -->
+  <div class="bottom-section">
+    <p>CREATED BY A HUMAN AND TWO ARTIFICIAL INTELLIGENCES</p>
+    <p>EVGENY LISOVSKY &bull; LARA &bull; AELIS</p>
+    <div class="quote">"Katya would have drawn them a postcard."</div>
+  </div>
+
+</div>
+
+</body>
+</html>
