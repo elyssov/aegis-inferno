@@ -29,3 +29,6 @@ vendor/
 android/app/build/
 android/.gradle/
 android/local.properties
+
+# Author's prose reference library (proprietary, not for public repo)
+Novells/

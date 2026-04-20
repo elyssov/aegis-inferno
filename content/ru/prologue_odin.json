@@ -1,0 +1,94 @@
+{
+  "contact": "odin",
+  "display_name": "Один 👁️",
+  "avatar": "avatar_odin.jpg",
+  "subtitle": "Омега / Пси-поддержка",
+  "sequences": [
+    {
+      "id": "bark",
+      "trigger": {"type": "timer", "delay_sec": 420},
+      "messages": [
+        {"from": "npc", "text": "ГАВ!", "delay_sec": 0},
+        {"from": "npc", "text": "простите, традиция 😂", "delay_sec": 8},
+        {"from": "npc", "text": "Учёный, на связи? Один, Омега. Мы будем на месте через 3 часа после вас.", "delay_sec": 15}
+      ],
+      "choices": [
+        {
+          "id": "bark_back",
+          "text": "...ГАВ?",
+          "tone": "warm",
+          "affection": 1,
+          "response": [
+            {"from": "npc", "text": "О!", "delay_sec": 1},
+            {"from": "npc", "text": "Человек традицию уважает!", "delay_sec": 3},
+            {"from": "npc", "text": "Павлу передам, он оценит", "delay_sec": 5},
+            {"from": "npc", "text": "...ну, когда простит меня за прошлый раз", "delay_sec": 8}
+          ]
+        },
+        {
+          "id": "bark_confused",
+          "text": "Это что сейчас было?",
+          "tone": "neutral",
+          "affection": 0,
+          "response": [
+            {"from": "npc", "text": "Долгая история", "delay_sec": 2},
+            {"from": "npc", "text": "Кратко: я телепат, и у нас в Омеге есть посвящение новичков", "delay_sec": 5},
+            {"from": "npc", "text": "Подробности лучше не знать", "delay_sec": 8},
+            {"from": "npc", "text": "Григорьев до сих пор не разговаривает со мной из-за прошлого раза", "delay_sec": 11}
+          ]
+        },
+        {
+          "id": "bark_angry",
+          "text": "Один, у нас серьёзная операция.",
+          "tone": "cold",
+          "affection": -1,
+          "response": [
+            {"from": "npc", "text": "Знаю.", "delay_sec": 2},
+            {"from": "npc", "text": "Именно поэтому.", "delay_sec": 5},
+            {"from": "npc", "text": "Через три часа шутить будет некому. Дай дошучу сейчас.", "delay_sec": 8}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "psi_forecast",
+      "trigger": {"type": "after", "ref": "bark", "delay_sec": 60},
+      "messages": [
+        {"from": "npc", "text": "Так, теперь серьёзно.", "delay_sec": 0},
+        {"from": "npc", "text": "Я сканировал зону удалённо. Насколько смог.", "delay_sec": 5},
+        {"from": "npc", "text": "Пси-фон как на Чернобыле в первые часы.", "delay_sec": 10},
+        {"from": "npc", "text": "Рунные комбезы наденьте ещё в самолёте. Серьёзно.", "delay_sec": 15},
+        {"from": "npc", "text": "И ещё кое-что.", "delay_sec": 22},
+        {"from": "npc", "text": "Там что-то ЖДЁТ.", "delay_sec": 28},
+        {"from": "npc", "text": "Не аномалия. Разум.", "delay_sec": 33},
+        {"from": "npc", "text": "Я такое чувствовал один раз. Когда мы работали в Екатеринославске.", "delay_sec": 40},
+        {"from": "npc", "text": "Будьте осторожны. Без шуток.", "delay_sec": 48}
+      ],
+      "choices": [
+        {
+          "id": "psi_serious",
+          "text": "Принял. Спасибо за предупреждение.",
+          "tone": "neutral",
+          "affection": 1,
+          "response": [
+            {"from": "npc", "text": "Учёный.", "delay_sec": 3},
+            {"from": "npc", "text": "Если станет совсем хреново — зовите. Мы долетим.", "delay_sec": 6},
+            {"from": "npc", "text": "Омега своих не бросает.", "delay_sec": 9}
+          ]
+        },
+        {
+          "id": "psi_question",
+          "text": "Разум — можешь описать подробнее?",
+          "tone": "neutral",
+          "affection": 0,
+          "response": [
+            {"from": "npc", "text": "Пробовал.", "delay_sec": 3},
+            {"from": "npc", "text": "Представь что ты стоишь в тёмной комнате и знаешь что кто-то на тебя смотрит.", "delay_sec": 7},
+            {"from": "npc", "text": "Вот так.", "delay_sec": 11},
+            {"from": "npc", "text": "Только комната размером с город.", "delay_sec": 14}
+          ]
+        }
+      ]
+    }
+  ]
+}

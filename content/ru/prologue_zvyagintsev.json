@@ -1,0 +1,97 @@
+{
+  "contact": "zvyagintsev",
+  "display_name": "Звягинцев М.А.",
+  "avatar": "avatar_zvyagintsev.jpg",
+  "subtitle": "Сапёр",
+  "sequences": [
+    {
+      "id": "pirozhki",
+      "trigger": {"type": "timer", "delay_sec": 300},
+      "messages": [
+        {"from": "npc", "text": "слушай", "delay_sec": 0},
+        {"from": "npc", "text": "я тут подумал", "delay_sec": 2},
+        {"from": "npc", "text": "когда вернёмся — открою ресторан", "delay_sec": 4},
+        {"from": "npc", "text": "назову «У Миши»", "delay_sec": 6},
+        {"from": "npc", "text": "фирменное блюдо — пирожки с мясом", "delay_sec": 8},
+        {"from": "npc", "text": "и шоколадный фондан", "delay_sec": 10},
+        {"from": "npc", "text": "как думаешь?", "delay_sec": 12}
+      ],
+      "choices": [
+        {
+          "id": "restaurant_yes",
+          "text": "Звягинцев, ты гений. Я первый посетитель.",
+          "tone": "warm",
+          "affection": 2,
+          "response": [
+            {"from": "npc", "text": "ЗАПИСАЛ", "delay_sec": 1},
+            {"from": "npc", "text": "бронь на двоих? с Катькой?", "delay_sec": 3},
+            {"from": "npc", "text": "стол у окна", "delay_sec": 4},
+            {"from": "npc", "text": "свечи", "delay_sec": 5},
+            {"from": "npc", "text": "и шоколадка рядом с детонаторами", "delay_sec": 7},
+            {"from": "npc", "text": "шучу", "delay_sec": 9},
+            {"from": "npc", "text": "детонаторы будут в подсобке", "delay_sec": 10}
+          ]
+        },
+        {
+          "id": "restaurant_cooking",
+          "text": "Миш, ты шашлык сжёг. Какой ресторан?",
+          "tone": "neutral",
+          "affection": 0,
+          "response": [
+            {"from": "npc", "text": "это", "delay_sec": 2},
+            {"from": "npc", "text": "была", "delay_sec": 3},
+            {"from": "npc", "text": "КОРОЧКА", "delay_sec": 4},
+            {"from": "npc", "text": "😤", "delay_sec": 5}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "personal",
+      "trigger": {"type": "after", "ref": "pirozhki", "delay_sec": 180},
+      "messages": [
+        {"from": "npc", "text": "кстати", "delay_sec": 0},
+        {"from": "npc", "text": "ты когда-нибудь был в Екатеринославске?", "delay_sec": 3}
+      ],
+      "choices": [
+        {
+          "id": "ekaterinoslavsk_no",
+          "text": "Нет. А ты?",
+          "tone": "neutral",
+          "affection": 0,
+          "response": [
+            {"from": "npc", "text": "нет", "delay_sec": 3},
+            {"from": "npc", "text": "у меня оттуда нет магнитика", "delay_sec": 6},
+            {"from": "npc", "text": "...", "delay_sec": 12},
+            {"from": "npc", "text": "я там потерял друга", "delay_sec": 18},
+            {"from": "npc", "text": "Сашку. Сапёр. Как я.", "delay_sec": 23},
+            {"from": "npc", "text": "он обезвреживал «подарок» внутри аномалии", "delay_sec": 28},
+            {"from": "npc", "text": "пространство сместилось", "delay_sec": 33},
+            {"from": "npc", "text": "его руки оказались в одном месте а провода в другом", "delay_sec": 38},
+            {"from": "npc", "text": "...", "delay_sec": 45},
+            {"from": "npc", "text": "поэтому когда говорят «78%» — мне не по себе", "delay_sec": 52},
+            {"from": "npc", "text": "ладно. забей. я пойду проверю заряды", "delay_sec": 60}
+          ]
+        },
+        {
+          "id": "ekaterinoslavsk_change_topic",
+          "text": "Нет. Расскажи лучше про фондан.",
+          "tone": "warm",
+          "affection": 1,
+          "response": [
+            {"from": "npc", "text": "о!", "delay_sec": 2},
+            {"from": "npc", "text": "значит так", "delay_sec": 3},
+            {"from": "npc", "text": "берёшь 70% какао, масло, сахар", "delay_sec": 5},
+            {"from": "npc", "text": "главное — не перегреть середину", "delay_sec": 7},
+            {"from": "npc", "text": "она должна быть жидкой внутри", "delay_sec": 9},
+            {"from": "npc", "text": "как лава", "delay_sec": 11},
+            {"from": "npc", "text": "...", "delay_sec": 15},
+            {"from": "npc", "text": "хреновое сравнение, учитывая куда мы летим", "delay_sec": 18},
+            {"from": "npc", "text": "😅", "delay_sec": 20}
+          ],
+          "_comment": "Игрок интуитивно уводит от тяжёлой темы. Звягинцев благодарен, хоть и не говорит это."
+        }
+      ]
+    }
+  ]
+}

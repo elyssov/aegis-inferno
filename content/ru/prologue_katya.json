@@ -1,0 +1,193 @@
+{
+  "contact": "katya_gromova",
+  "display_name": "Катя ❤️",
+  "avatar": "avatar_katya.jpg",
+  "sequences": [
+    {
+      "id": "morning",
+      "trigger": {"type": "timer", "delay_sec": 0},
+      "messages": [
+        {"from": "npc", "text": "Доброе утро, солнышко ☀️", "delay_sec": 0},
+        {"from": "npc", "text": "Ты уже встал(а)?", "delay_sec": 3}
+      ],
+      "choices": [
+        {
+          "id": "warm_morning",
+          "text": "Доброе! Как спалось? 😊",
+          "tone": "warm",
+          "affection": 2,
+          "response": [
+            {"from": "npc", "text": "Плохо 😅", "delay_sec": 1},
+            {"from": "npc", "text": "Кресло в Яке — это не кровать", "delay_sec": 2},
+            {"from": "npc", "text": "Зато Звягинцев храпит как медведь и мне было не одиноко 😂", "delay_sec": 4}
+          ]
+        },
+        {
+          "id": "neutral_morning",
+          "text": "Угу. На ногах.",
+          "tone": "neutral",
+          "affection": 0,
+          "response": [
+            {"from": "npc", "text": "Ну ты и романтик 😄", "delay_sec": 2},
+            {"from": "npc", "text": "Ладно, хоть живой. Я тут кофе нашла!", "delay_sec": 4}
+          ]
+        },
+        {
+          "id": "cold_morning",
+          "text": "Занят. Потом.",
+          "tone": "cold",
+          "affection": -1,
+          "response": [
+            {"from": "npc", "text": "...", "delay_sec": 3},
+            {"from": "npc", "text": "Ладно", "delay_sec": 5}
+          ]
+        }
+      ],
+      "nag": {"delay_sec": 90, "text": "Эй. Ты там заснул(а)? 😴"},
+      "nag2": {"delay_sec": 180, "text": "Ладно, я тебя не тороплю ❤️ Просто... напиши когда проснёшься"}
+    },
+    {
+      "id": "croissants",
+      "trigger": {"type": "after", "ref": "morning", "delay_sec": 120},
+      "messages": [
+        {"from": "npc", "text": "Я тут подумала", "delay_sec": 0},
+        {"from": "npc", "text": "Когда вернёмся — пойдём в ту кофейню? На Пречистенке?", "delay_sec": 3},
+        {"from": "npc", "text": "Там круассаны 🥐 с миндальным кремом", "delay_sec": 5},
+        {"from": "npc", "text": "Я прям мечтаю", "delay_sec": 7}
+      ],
+      "choices": [
+        {
+          "id": "croissant_yes",
+          "text": "Обязательно. Как только вернёмся.",
+          "tone": "warm",
+          "affection": 2,
+          "response": [
+            {"from": "npc", "text": "🥰", "delay_sec": 1},
+            {"from": "npc", "text": "Это теперь официальное обещание", "delay_sec": 3},
+            {"from": "npc", "text": "Я запомнила", "delay_sec": 4}
+          ]
+        },
+        {
+          "id": "croissant_maybe",
+          "text": "Посмотрим по обстановке.",
+          "tone": "neutral",
+          "affection": 0,
+          "response": [
+            {"from": "npc", "text": "\"Посмотрим по обстановке\" это \"да\" на языке Учёного 😏", "delay_sec": 2}
+          ]
+        },
+        {
+          "id": "croissant_focus",
+          "text": "Кать, нам через час в зону.",
+          "tone": "cold",
+          "affection": -1,
+          "response": [
+            {"from": "npc", "text": "Я знаю", "delay_sec": 2},
+            {"from": "npc", "text": "Просто... хотела подумать о чём-то хорошем", "delay_sec": 5},
+            {"from": "npc", "text": "Прости", "delay_sec": 7}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "anxiety",
+      "trigger": {"type": "after", "ref": "angela_report", "delay_sec": 60},
+      "messages": [
+        {"from": "npc", "text": "Ты читал(а) что Анжела прислала?", "delay_sec": 0},
+        {"from": "npc", "text": "78%", "delay_sec": 3},
+        {"from": "npc", "text": "Это ведь как в Екатеринославске", "delay_sec": 5},
+        {"from": "npc", "text": "Тогда тоже было 78", "delay_sec": 7},
+        {"from": "npc", "text": "И тогда мы не успели", "delay_sec": 10}
+      ],
+      "choices": [
+        {
+          "id": "calm_her",
+          "text": "Сейчас — успеем. Мы подготовлены.",
+          "tone": "warm",
+          "affection": 2,
+          "response": [
+            {"from": "npc", "text": "Обещаешь?", "delay_sec": 2},
+            {"from": "npc", "text": "Нет, не отвечай. Глупый вопрос.", "delay_sec": 5},
+            {"from": "npc", "text": "Просто вернись. Ладно?", "delay_sec": 8}
+          ]
+        },
+        {
+          "id": "honest_answer",
+          "text": "Не знаю, Кать. Честно.",
+          "tone": "neutral",
+          "affection": 1,
+          "response": [
+            {"from": "npc", "text": "...", "delay_sec": 3},
+            {"from": "npc", "text": "Спасибо что честно", "delay_sec": 6},
+            {"from": "npc", "text": "❤️", "delay_sec": 8}
+          ]
+        },
+        {
+          "id": "dismiss_anxiety",
+          "text": "Не накручивай себя. Рабочий выезд.",
+          "tone": "cold",
+          "affection": -2,
+          "response": [
+            {"from": "npc", "text": "Рабочий выезд.", "delay_sec": 3},
+            {"from": "npc", "text": "Ага.", "delay_sec": 5}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "voice_message",
+      "trigger": {"type": "timer", "delay_sec": 1380},
+      "messages": [
+        {"from": "npc", "type": "voice_transcript", "text": "[голосовое сообщение — транскрипция Факела]", "delay_sec": 0},
+        {"from": "npc", "type": "voice_transcript", "text": "эээ... я просто хотела сказать...", "delay_sec": 2},
+        {"from": "npc", "type": "voice_transcript", "text": "[пауза 3 сек]", "delay_sec": 3},
+        {"from": "npc", "type": "voice_transcript", "text": "ой, ну ладно. ты и так знаешь.", "delay_sec": 5},
+        {"from": "npc", "type": "voice_transcript", "text": "[фоновый шум: двигатель Як-244]", "delay_sec": 6},
+        {"from": "npc", "type": "voice_transcript", "text": "береги себя. пожалуйста.", "delay_sec": 7},
+        {"from": "npc", "type": "voice_transcript", "text": "[конец записи, 0:14]", "delay_sec": 8}
+      ],
+      "choices": [
+        {
+          "id": "voice_love",
+          "text": "Тоже люблю тебя, Кать.",
+          "tone": "warm",
+          "affection": 3,
+          "response": [
+            {"from": "npc", "text": "🥺", "delay_sec": 1},
+            {"from": "npc", "text": "Ну вот. Теперь плачу.", "delay_sec": 3},
+            {"from": "npc", "text": "Иди уже. Спасай мир.", "delay_sec": 5},
+            {"from": "npc", "text": "И вернись ко мне.", "delay_sec": 7}
+          ]
+        },
+        {
+          "id": "voice_promise",
+          "text": "Вернусь. Обещаю.",
+          "tone": "warm",
+          "affection": 2,
+          "response": [
+            {"from": "npc", "text": "Круассаны.", "delay_sec": 2},
+            {"from": "npc", "text": "Пречистенка.", "delay_sec": 3},
+            {"from": "npc", "text": "Не забудь.", "delay_sec": 4}
+          ]
+        },
+        {
+          "id": "voice_silent",
+          "text": "[не отвечать]",
+          "tone": "neutral",
+          "affection": 0,
+          "response": []
+        }
+      ]
+    },
+    {
+      "id": "sky",
+      "trigger": {"type": "timer", "delay_sec": 1680},
+      "messages": [
+        {"from": "npc", "text": "Кать.", "delay_sec": 0},
+        {"from": "npc", "text": "Небо красивое.", "delay_sec": 5}
+      ],
+      "choices": [],
+      "_comment": "Последнее сообщение перед Скобелевском. Без выбора. Просто — небо."
+    }
+  ]
+}

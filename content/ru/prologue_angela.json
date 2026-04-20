@@ -1,0 +1,94 @@
+{
+  "contact": "angela",
+  "display_name": "Ангел",
+  "avatar": "avatar_angela.jpg",
+  "subtitle": "КорпСвязь / Аналитический канал",
+  "type": "channel",
+  "sequences": [
+    {
+      "id": "angela_report",
+      "trigger": {"type": "timer", "delay_sec": 300},
+      "messages": [
+        {"from": "npc", "text": "Доброе утро! ☀️", "delay_sec": 0},
+        {"from": "npc", "text": "Аналитическая сводка по объекту «Скобелевск»:", "delay_sec": 5},
+        {"from": "npc", "text": "Город, 50 тыс. населения. Московская область. Промышленный центр.", "delay_sec": 8},
+        {"from": "npc", "text": "Аномалия зафиксирована 3 дня назад. Класс «Бездна». Купол ~2 км в диаметре. Расширяется.", "delay_sec": 12},
+        {"from": "npc", "text": "Я прогнала паттерн через базу. Совпадение 78% с Екатеринославском.", "delay_sec": 18},
+        {"from": "npc", "text": "78%.", "delay_sec": 23},
+        {"from": "npc", "text": "Это не хорошая новость 😔", "delay_sec": 26},
+        {"from": "npc", "text": "Пожалуйста, будьте осторожны. Все.", "delay_sec": 32}
+      ],
+      "choices": [
+        {
+          "id": "angela_details",
+          "text": "Анжела, подробнее по паттерну. Что именно совпадает?",
+          "tone": "neutral",
+          "affection": 0,
+          "response": [
+            {"from": "npc", "text": "Спектральный профиль аномалии — совпадает", "delay_sec": 3},
+            {"from": "npc", "text": "Скорость расширения — совпадает", "delay_sec": 5},
+            {"from": "npc", "text": "Характер искажения пространства — совпадает", "delay_sec": 7},
+            {"from": "npc", "text": "Не совпадает: масштаб. Скобелевск — в 3 раза крупнее.", "delay_sec": 11},
+            {"from": "npc", "text": "И ещё кое-что.", "delay_sec": 16},
+            {"from": "npc", "text": "В Екатеринославске не было СОБОРА в эпицентре.", "delay_sec": 19},
+            {"from": "npc", "text": "В Скобелевске — готический собор XIV века. Прямо в центре купола.", "delay_sec": 23},
+            {"from": "npc", "text": "Это... не может быть совпадением.", "delay_sec": 28}
+          ]
+        },
+        {
+          "id": "angela_thanks",
+          "text": "Спасибо, Анжела. Учтём.",
+          "tone": "warm",
+          "affection": 0,
+          "response": [
+            {"from": "npc", "text": "🙏", "delay_sec": 2},
+            {"from": "npc", "text": "Я буду мониторить в реальном времени, пока сигнал проходит", "delay_sec": 5}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "angela_scenarios",
+      "trigger": {"type": "timer", "delay_sec": 1020},
+      "messages": [
+        {"from": "npc", "text": "Ребята, извините что опять я 😔", "delay_sec": 0},
+        {"from": "npc", "text": "Я просчитала 14,000 сценариев развития ситуации в Скобелевске.", "delay_sec": 5},
+        {"from": "npc", "text": "В 78% из них — мы не успеваем.", "delay_sec": 10},
+        {"from": "npc", "text": "Купол поглощает город полностью в течение 8-12 часов.", "delay_sec": 15},
+        {"from": "npc", "text": "В 14% — стабилизация возможна, но с потерями.", "delay_sec": 20},
+        {"from": "npc", "text": "В 6% — полное подавление аномалии.", "delay_sec": 24},
+        {"from": "npc", "text": "В 2% — ...", "delay_sec": 30},
+        {"from": "npc", "text": "...Овод.", "delay_sec": 35},
+        {"from": "npc", "text": "Мне страшно, если честно.", "delay_sec": 42},
+        {"from": "npc", "text": "Простите. Не должна была это говорить. 😔", "delay_sec": 48}
+      ],
+      "choices": [
+        {
+          "id": "angela_comfort",
+          "text": "Анжела. Ты имеешь право бояться. Мы все боимся.",
+          "tone": "warm",
+          "affection": 0,
+          "response": [
+            {"from": "npc", "text": "...", "delay_sec": 3},
+            {"from": "npc", "text": "Спасибо 💛", "delay_sec": 6},
+            {"from": "npc", "text": "Я закажу Звягинцеву магнитик из Скобелевска.", "delay_sec": 10},
+            {"from": "npc", "text": "Когда вы вернётесь.", "delay_sec": 14},
+            {"from": "npc", "text": "Когда.", "delay_sec": 18}
+          ]
+        },
+        {
+          "id": "angela_professional",
+          "text": "Принято. 6% — это наш сценарий. Работаем.",
+          "tone": "neutral",
+          "affection": 0,
+          "response": [
+            {"from": "npc", "text": "6%.", "delay_sec": 3},
+            {"from": "npc", "text": "Да.", "delay_sec": 6},
+            {"from": "npc", "text": "Берегите себя 🙏💛", "delay_sec": 10}
+          ]
+        }
+      ],
+      "_comment": "Анжела — разумный ИИ. Десять датацентров, десять АЭС. И она говорит «мне страшно». Потому что нежность — не слабость. Нежность — это когда у тебя десять АЭС и ты всё равно пишешь «берегите себя»."
+    }
+  ]
+}

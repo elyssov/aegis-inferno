@@ -1,0 +1,203 @@
+{
+  "contact": "group_gamma",
+  "display_name": "Гамма 🔥",
+  "type": "group",
+  "members": ["katya", "simonov", "starkova", "zvyagintsev", "player"],
+  "sequences": [
+    {
+      "id": "zvyag_chocolate",
+      "trigger": {"type": "timer", "delay_sec": 30},
+      "messages": [
+        {"from": "zvyagintsev", "text": "НАРОД", "delay_sec": 0},
+        {"from": "zvyagintsev", "text": "у кого есть шоколадка", "delay_sec": 2},
+        {"from": "zvyagintsev", "text": "я серьезно", "delay_sec": 3},
+        {"from": "starkova", "text": "Звягинцев ты свинья", "delay_sec": 8},
+        {"from": "starkova", "text": "Мы полчаса в воздухе", "delay_sec": 10},
+        {"from": "starkova", "text": "ТЫ ЕЛ ПЕРЕД ВЫЛЕТОМ", "delay_sec": 11},
+        {"from": "zvyagintsev", "text": "ну и что", "delay_sec": 15},
+        {"from": "zvyagintsev", "text": "это было давно", "delay_sec": 16},
+        {"from": "zvyagintsev", "text": "минут 40 назад", "delay_sec": 17},
+        {"from": "katya", "text": "Миш, у меня сникерс есть 🍫", "delay_sec": 22},
+        {"from": "zvyagintsev", "text": "КАТЬКА ТЫ СВЯТАЯ", "delay_sec": 24},
+        {"from": "starkova", "text": "Не поощряй его", "delay_sec": 27}
+      ],
+      "choices": [
+        {
+          "id": "join_joke",
+          "text": "Звягинцев, ты когда-нибудь НЕ голодный?",
+          "tone": "warm",
+          "affection": 1,
+          "response": [
+            {"from": "zvyagintsev", "text": "был один раз", "delay_sec": 2},
+            {"from": "zvyagintsev", "text": "в 2019", "delay_sec": 3},
+            {"from": "zvyagintsev", "text": "не понравилось", "delay_sec": 4},
+            {"from": "starkova", "text": "😂", "delay_sec": 6},
+            {"from": "katya", "text": "😂😂😂", "delay_sec": 7}
+          ]
+        },
+        {
+          "id": "stay_quiet",
+          "text": "[не отвечать]",
+          "tone": "neutral",
+          "affection": 0,
+          "response": []
+        }
+      ]
+    },
+    {
+      "id": "briefing_reaction",
+      "trigger": {"type": "after", "ref": "samoylov_briefing", "delay_sec": 60},
+      "messages": [
+        {"from": "simonov", "text": "Все прочитали брифинг.", "delay_sec": 0, "_note": "Не вопрос. Утверждение."},
+        {"from": "starkova", "text": "Прочитала", "delay_sec": 5},
+        {"from": "starkova", "text": "Пока некоторые жрали", "delay_sec": 7},
+        {"from": "zvyagintsev", "text": "эй", "delay_sec": 10},
+        {"from": "zvyagintsev", "text": "я тоже прочитал", "delay_sec": 11},
+        {"from": "zvyagintsev", "text": "параллельно жевал но прочитал", "delay_sec": 12},
+        {"from": "katya", "text": "Прочитала. 78%. Это серьёзно.", "delay_sec": 18},
+        {"from": "simonov", "text": "Серьёзно.", "delay_sec": 25}
+      ],
+      "choices": [
+        {
+          "id": "confirm_read",
+          "text": "Читал. Есть вопросы по периметру.",
+          "tone": "neutral",
+          "affection": 1,
+          "response": [
+            {"from": "simonov", "text": "Задай.", "delay_sec": 3}
+          ],
+          "follow_up": "perimeter_questions"
+        },
+        {
+          "id": "not_yet",
+          "text": "Ещё не дочитал.",
+          "tone": "neutral",
+          "affection": -1,
+          "response": [
+            {"from": "simonov", "text": "Дочитай.", "delay_sec": 2}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "magnets",
+      "trigger": {"type": "timer", "delay_sec": 600},
+      "messages": [
+        {"from": "zvyagintsev", "text": "кстати", "delay_sec": 0},
+        {"from": "zvyagintsev", "text": "в Скобелевске наверняка есть магнитики", "delay_sec": 2},
+        {"from": "zvyagintsev", "text": "кто-нибудь мне привезёт?", "delay_sec": 4},
+        {"from": "starkova", "text": "Миша. Мы летим зачищать аномалию класса «Бездна».", "delay_sec": 10},
+        {"from": "starkova", "text": "А ты про магнитики.", "delay_sec": 12},
+        {"from": "zvyagintsev", "text": "ну а что", "delay_sec": 15},
+        {"from": "zvyagintsev", "text": "у меня 23 штуки", "delay_sec": 16},
+        {"from": "zvyagintsev", "text": "нет из Скобелевска", "delay_sec": 17},
+        {"from": "zvyagintsev", "text": "и нет из Екатеринославска", "delay_sec": 20},
+        {"from": "zvyagintsev", "text": "...", "delay_sec": 25},
+        {"from": "katya", "text": "Миш 💛", "delay_sec": 30},
+        {"from": "simonov", "text": "Привезём.", "delay_sec": 35, "_note": "Одно слово. Весь Симонов."}
+      ],
+      "choices": [
+        {
+          "id": "magnet_promise",
+          "text": "Два привезу. Один от себя, один от Старковой.",
+          "tone": "warm",
+          "affection": 2,
+          "response": [
+            {"from": "starkova", "text": "Ээээй", "delay_sec": 2},
+            {"from": "starkova", "text": "...ладно. Привезём.", "delay_sec": 5},
+            {"from": "zvyagintsev", "text": "🥹", "delay_sec": 7}
+          ]
+        },
+        {
+          "id": "magnet_quiet",
+          "text": "[не отвечать]",
+          "tone": "neutral",
+          "affection": 0,
+          "response": []
+        }
+      ]
+    },
+    {
+      "id": "shashlik_debate",
+      "trigger": {"type": "timer", "delay_sec": 960},
+      "messages": [
+        {"from": "zvyagintsev", "text": "ребят", "delay_sec": 0},
+        {"from": "zvyagintsev", "text": "когда вернёмся", "delay_sec": 2},
+        {"from": "zvyagintsev", "text": "шашлыки у меня", "delay_sec": 3},
+        {"from": "starkova", "text": "Ты в прошлый раз сжёг мясо", "delay_sec": 8},
+        {"from": "zvyagintsev", "text": "ЭТО БЫЛА КОРОЧКА", "delay_sec": 10},
+        {"from": "katya", "text": "Мишенька, это был уголь 😂", "delay_sec": 14},
+        {"from": "zvyagintsev", "text": "предатели", "delay_sec": 17},
+        {"from": "zvyagintsev", "text": "Симонов! скажи им!", "delay_sec": 19},
+        {"from": "simonov", "text": "Мариновать надо дольше.", "delay_sec": 25},
+        {"from": "zvyagintsev", "text": "...", "delay_sec": 28},
+        {"from": "zvyagintsev", "text": "я вас всех ненавижу", "delay_sec": 30},
+        {"from": "starkova", "text": "❤️", "delay_sec": 32},
+        {"from": "katya", "text": "❤️❤️", "delay_sec": 33},
+        {"from": "zvyagintsev", "text": "...ладно не ненавижу", "delay_sec": 36},
+        {"from": "zvyagintsev", "text": "но мариновать я буду по-своему", "delay_sec": 38}
+      ],
+      "choices": [
+        {
+          "id": "simonov_side",
+          "text": "Симонов прав. Минимум 12 часов.",
+          "tone": "neutral",
+          "affection": 1,
+          "response": [
+            {"from": "simonov", "text": "Вот.", "delay_sec": 3},
+            {"from": "zvyagintsev", "text": "ДА ВЫ СГОВОРИЛИСЬ", "delay_sec": 5}
+          ]
+        },
+        {
+          "id": "zvyag_side",
+          "text": "Звягинцев, я за тебя. Корочка — это искусство.",
+          "tone": "warm",
+          "affection": 2,
+          "response": [
+            {"from": "zvyagintsev", "text": "ВОТ", "delay_sec": 2},
+            {"from": "zvyagintsev", "text": "УЧЁНЫЙ ПОНИМАЕТ", "delay_sec": 3},
+            {"from": "starkova", "text": "Вы два сапога пара", "delay_sec": 6},
+            {"from": "katya", "text": "Мне тоже нравилась корочка 🙊", "delay_sec": 9},
+            {"from": "zvyagintsev", "text": "РЕАБИЛИТИРОВАН", "delay_sec": 11}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "two_minutes",
+      "trigger": {"type": "timer", "delay_sec": 1620},
+      "messages": [
+        {"from": "simonov", "text": "Две минуты.", "delay_sec": 0},
+        {"from": "simonov", "text": "Все к люкам.", "delay_sec": 5},
+        {"from": "starkova", "text": "Готова.", "delay_sec": 10},
+        {"from": "zvyagintsev", "text": "готов", "delay_sec": 12},
+        {"from": "zvyagintsev", "text": "пирожки взял", "delay_sec": 13},
+        {"from": "katya", "text": "Готова.", "delay_sec": 16},
+        {"from": "simonov", "text": "Учёный?", "delay_sec": 25}
+      ],
+      "choices": [
+        {
+          "id": "ready",
+          "text": "Готов.",
+          "tone": "neutral",
+          "affection": 1,
+          "response": [
+            {"from": "simonov", "text": "Группа Гамма. Выход.", "delay_sec": 5}
+          ]
+        },
+        {
+          "id": "ready_warm",
+          "text": "Готов. Увидимся внизу. Все.",
+          "tone": "warm",
+          "affection": 2,
+          "response": [
+            {"from": "starkova", "text": "Увидимся.", "delay_sec": 3},
+            {"from": "zvyagintsev", "text": "❤️", "delay_sec": 4},
+            {"from": "simonov", "text": "Группа Гамма. Выход.", "delay_sec": 8}
+          ]
+        }
+      ],
+      "nag": {"delay_sec": 30, "text_from": "simonov", "text": "Учёный. Время."}
+    }
+  ]
+}

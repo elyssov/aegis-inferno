@@ -1,0 +1,100 @@
+{
+  "contact": "starkova",
+  "display_name": "Старкова Е.Д.",
+  "avatar": "avatar_starkova.jpg",
+  "subtitle": "Снайпер",
+  "sequences": [
+    {
+      "id": "cats",
+      "trigger": {"type": "timer", "delay_sec": 660},
+      "messages": [
+        {"from": "npc", "text": "Слушай", "delay_sec": 0},
+        {"from": "npc", "text": "Глок вчера опять залез в стиральную машину", "delay_sec": 3},
+        {"from": "npc", "text": "Я его не заметила", "delay_sec": 5},
+        {"from": "npc", "text": "Включила", "delay_sec": 6},
+        {"from": "npc", "text": "Через 10 секунд слышу МРРРЯЯЯУ", "delay_sec": 8},
+        {"from": "npc", "text": "Открываю — мокрый рыжий комок с глазами по пять рублей", "delay_sec": 11},
+        {"from": "npc", "text": "Маузер сидел рядом и СМОТРЕЛ", "delay_sec": 14},
+        {"from": "npc", "text": "С таким видом типа «ну я же предупреждал»", "delay_sec": 16}
+      ],
+      "choices": [
+        {
+          "id": "cats_laugh",
+          "text": "Глок пережил бы апокалипсис. Стиральная машина ему не страшна.",
+          "tone": "warm",
+          "affection": 2,
+          "response": [
+            {"from": "npc", "text": "Он РЫЖИЙ и ТУПОЙ", "delay_sec": 2},
+            {"from": "npc", "text": "В этом его сила", "delay_sec": 4},
+            {"from": "npc", "text": "Его невозможно убить потому что он не понимает что должен умереть", "delay_sec": 7},
+            {"from": "npc", "text": "Как Кот", "delay_sec": 10},
+            {"from": "npc", "text": "Кстати, Кот тоже рыжий. Совпадение?", "delay_sec": 13}
+          ]
+        },
+        {
+          "id": "cats_mauser",
+          "text": "Маузер — интеллигент. Глок — хаос.",
+          "tone": "neutral",
+          "affection": 1,
+          "response": [
+            {"from": "npc", "text": "Маузер — манипулятор", "delay_sec": 2},
+            {"from": "npc", "text": "Он ЗНАЛ что Глок полезет", "delay_sec": 4},
+            {"from": "npc", "text": "И дождался", "delay_sec": 6},
+            {"from": "npc", "text": "Чёрный кот. Расчётливый. Красивый.", "delay_sec": 9},
+            {"from": "npc", "text": "Напоминает мне кое-кого.", "delay_sec": 12},
+            {"from": "npc", "text": "Шучу.", "delay_sec": 15},
+            {"from": "npc", "text": "Или нет.", "delay_sec": 17}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "take_care",
+      "trigger": {"type": "timer", "delay_sec": 1320},
+      "messages": [
+        {"from": "npc", "text": "Учёный", "delay_sec": 0},
+        {"from": "npc", "text": "Без шуток", "delay_sec": 5}
+      ],
+      "choices": [
+        {
+          "id": "listen",
+          "text": "Слушаю.",
+          "tone": "neutral",
+          "affection": 0,
+          "response": [
+            {"from": "npc", "text": "Береги её.", "delay_sec": 3},
+            {"from": "npc", "text": "Серьёзно.", "delay_sec": 6},
+            {"from": "npc", "text": "Я знаю как это — когда не уберёг.", "delay_sec": 12},
+            {"from": "npc", "text": "Не повторяй.", "delay_sec": 18}
+          ],
+          "follow_up_choices": [
+            {
+              "id": "promise_her",
+              "text": "Уберегу. Слово.",
+              "tone": "warm",
+              "affection": 2,
+              "response": [
+                {"from": "npc", "text": "...", "delay_sec": 3},
+                {"from": "npc", "text": "Ладно.", "delay_sec": 6},
+                {"from": "npc", "text": "Иди к чёрту.", "delay_sec": 9},
+                {"from": "npc", "text": "💕", "delay_sec": 12}
+              ]
+            },
+            {
+              "id": "we_all_come_back",
+              "text": "Мы ВСЕ вернёмся. И ты.",
+              "tone": "warm",
+              "affection": 3,
+              "response": [
+                {"from": "npc", "text": "...", "delay_sec": 3},
+                {"from": "npc", "text": "Ты иногда говоришь правильные вещи, Учёный.", "delay_sec": 8},
+                {"from": "npc", "text": "Иногда.", "delay_sec": 12}
+              ]
+            }
+          ]
+        }
+      ],
+      "_comment": "Старкова бывшая Учёного. Полгода, 3 года назад. Ревнует по-сестрински. Этот момент — она снимает маску. Она ЗАБОТИТСЯ. По-настоящему."
+    }
+  ]
+}

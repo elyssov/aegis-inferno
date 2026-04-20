@@ -1,0 +1,85 @@
+{
+  "contact": "simonov",
+  "display_name": "Симонов И.П.",
+  "avatar": "avatar_simonov.jpg",
+  "subtitle": "Командир группы «Гамма»",
+  "sequences": [
+    {
+      "id": "equipment_check",
+      "trigger": {"type": "timer", "delay_sec": 1200},
+      "messages": [
+        {"from": "npc", "text": "Проверка снаряжения.", "delay_sec": 0},
+        {"from": "npc", "text": "Рунный комбез. УГТ. Форсаж. Вихрь. ГШ-18. Аптечка.", "delay_sec": 8},
+        {"from": "npc", "text": "Доложи.", "delay_sec": 15}
+      ],
+      "choices": [
+        {
+          "id": "report_ready",
+          "text": "Всё на месте. Комплект полный.",
+          "tone": "neutral",
+          "affection": 1,
+          "response": [
+            {"from": "npc", "text": "Хорошо.", "delay_sec": 3}
+          ]
+        },
+        {
+          "id": "report_question",
+          "text": "ШПК взять? Или стандарт?",
+          "tone": "neutral",
+          "affection": 1,
+          "response": [
+            {"from": "npc", "text": "ШПК.", "delay_sec": 3},
+            {"from": "npc", "text": "Класс «Бездна». Стандарт не хватит.", "delay_sec": 8}
+          ]
+        },
+        {
+          "id": "report_joke",
+          "text": "А Звягинцев пирожки считает за снаряжение?",
+          "tone": "warm",
+          "affection": 0,
+          "response": [
+            {"from": "npc", "text": "...", "delay_sec": 3},
+            {"from": "npc", "text": "Доложи по снаряжению.", "delay_sec": 8, "_note": "Не оценил. Но и не разозлился."}
+          ]
+        }
+      ],
+      "nag": {"delay_sec": 60, "text": "Учёный. Снаряжение."},
+      "push_responses": [
+        {"count": 2, "text": "Я услышал. Жди."},
+        {"count": 3, "text": "Учёный. Я сказал — жди."},
+        {"count": 4, "text": "", "delay_sec": 60, "text_delayed": "Больше так не делай."}
+      ]
+    },
+    {
+      "id": "chess",
+      "trigger": {"type": "after", "ref": "equipment_check", "delay_sec": 120},
+      "messages": [
+        {"from": "npc", "text": "Когда вернёмся.", "delay_sec": 0},
+        {"from": "npc", "text": "Партию.", "delay_sec": 8}
+      ],
+      "choices": [
+        {
+          "id": "chess_accept",
+          "text": "С удовольствием. Белыми?",
+          "tone": "warm",
+          "affection": 2,
+          "response": [
+            {"from": "npc", "text": "Чёрными.", "delay_sec": 3},
+            {"from": "npc", "text": "Ты в прошлый раз выиграл белыми. Теперь попробуй чёрными.", "delay_sec": 8}
+          ]
+        },
+        {
+          "id": "chess_joke",
+          "text": "Симонов, ты же знаешь что я тебя обыграю.",
+          "tone": "warm",
+          "affection": 1,
+          "response": [
+            {"from": "npc", "text": "Знаю.", "delay_sec": 3},
+            {"from": "npc", "text": "Поэтому и играю.", "delay_sec": 8}
+          ]
+        }
+      ],
+      "_comment": "Единственный момент где Симонов показывает человечность. Шахматы = его язык дружбы."
+    }
+  ]
+}
